@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Math-Comic Culinary — Digital Comic &amp; SPtLDV Learning Platform</title>
+<meta name="description" content="Platform belajar komik digital interaktif: karakter manga beranimasi, cerita 4 bab dapur D'Pastry Bakery, dan grafik SPtLDV dengan Konvensi DHP Bersih." />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  document.documentElement.classList.add('tw-loading');
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:   '#1B140D',
+          cream: '#FFF8EC',
+          paper: '#FFFCF5',
+          shell: '#FDEFD8',
+          butter:{ 50:'#FFFBEA',100:'#FFF3C4',200:'#FDE68A',300:'#FBD34D',400:'#F6B93B',500:'#E59A15',600:'#C88A08' },
+          crust: { 50:'#FFF3E6',100:'#FFE0BF',200:'#FFC48A',300:'#FBA94C',400:'#F58A21',500:'#DE6F0C',600:'#B4560A' },
+          wood:  { 100:'#F3E7D8',200:'#E6D2BC',300:'#D6B895',400:'#B98F62',500:'#8A5A34',600:'#6F4726',700:'#573620',800:'#412818' },
+          jam:   '#C2453C',
+          leaf:  '#2F855A'
+        },
+        fontFamily: {
+          comic: ['"Baloo 2"','"Comic Sans MS"','ui-rounded','system-ui','sans-serif'],
+          body:  ['"Plus Jakarta Sans"','ui-sans-serif','system-ui','sans-serif']
+        },
+        boxShadow: {
+          comic: '6px 6px 0 0 #1B140D',
+          comicSm: '4px 4px 0 0 #1B140D',
+          comicXs: '3px 3px 0 0 #1B140D'
+        }
+      }
+    }
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  html.tw-loading { visibility:hidden; }
+  :root { --ink:#1B140D; }
+  body {
+    font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#1B140D; background-color:#FFF8EC;
+    background-image:
+      radial-gradient(950px 430px at 8% -6%, rgba(251,211,77,.38), transparent 60%),
+      radial-gradient(820px 400px at 96% -4%, rgba(251,169,76,.30), transparent 60%),
+      radial-gradient(rgba(27,20,13,.05) 1.1px, transparent 1.2px);
+    background-size:auto,auto,12px 12px;
+  }
+  .font-comic { font-family:'Baloo 2','Comic Sans MS',ui-rounded,system-ui,sans-serif; }
+  .math { font-family:'Cambria Math','Times New Roman',Georgia,serif; font-style:italic; }
+  .mono { font-variant-numeric:tabular-nums; }
+  ::-webkit-scrollbar{width:10px;height:10px} ::-webkit-scrollbar-track{background:#FDEFD8}
+  ::-webkit-scrollbar-thumb{background:#D6B895;border-radius:99px}
+
+  /* ------- bingkai komik ------- */
+  .comic-border { border:3px solid var(--ink); box-shadow:6px 6px 0 0 var(--ink); }
+  .comic-border-sm { border:3px solid var(--ink); box-shadow:4px 4px 0 0 var(--ink); }
+  .halftone { background-image:radial-gradient(rgba(27,20,13,.15) 1.2px, transparent 1.3px); background-size:9px 9px; }
+  .speedlines { background:repeating-linear-gradient(100deg, transparent 0 14px, rgba(27,20,13,.07) 14px 16px); }
+
+  /* ------- gelembung dialog ------- */
+  .bubble2 { position:relative; background:#fff; border:3px solid var(--ink); border-radius:20px; padding:.55rem .8rem .65rem; box-shadow:4px 4px 0 rgba(27,20,13,.85); }
+  .bubble2.tail-l::before { content:''; position:absolute; left:-15px; top:13px; border:10px solid transparent; border-right:13px solid var(--ink); }
+  .bubble2.tail-l::after  { content:''; position:absolute; left:-8px;  top:16px; border:7px solid transparent;  border-right:10px solid #fff; }
+  .bubble2.tail-r::before { content:''; position:absolute; right:-15px; top:13px; border:10px solid transparent; border-left:13px solid var(--ink); }
+  .bubble2.tail-r::after  { content:''; position:absolute; right:-8px;  top:16px; border:7px solid transparent;  border-left:10px solid #fff; }
+  .caption { background:#FFF3C4; border:3px solid var(--ink); box-shadow:4px 4px 0 rgba(27,20,13,.85); border-radius:14px; padding:.5rem .8rem; font-style:italic; font-weight:600; }
+
+  /* ------- stiker onomatope ------- */
+  .sfx-sticker { position:absolute; z-index:6; font-family:'Baloo 2',sans-serif; font-weight:800; line-height:1; color:#fff;
+    -webkit-text-stroke:2px var(--ink); paint-order:stroke; text-shadow:3px 3px 0 var(--ink); letter-spacing:.04em;
+    transform:rotate(-8deg); pointer-events:none; }
+  body.no-fx .fx { display:none !important; }
+
+  /* ------- ANIMASI KARAKTER (hidup!) ------- */
+  @keyframes blinkLid { 0%,91%,100% { transform:scaleY(0); } 94%,97% { transform:scaleY(1); } }
+  .blink-lid { transform-box:fill-box; transform-origin:center top; transform:scaleY(0); animation:blinkLid 4.4s infinite; }
+  @keyframes breathe { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-2.6px); } }
+  .breathe { transform-box:fill-box; animation:breathe 3.4s ease-in-out infinite; }
+  @keyframes waveArm { 0%,100% { transform:rotate(0deg); } 50% { transform:rotate(-16deg); } }
+  .wave-arm { transform-box:fill-box; transform-origin:18% 88%; animation:waveArm 1.5s ease-in-out infinite; }
+  @keyframes twinkle { 0%,100% { opacity:.25; transform:scale(.7) rotate(0deg); } 50% { opacity:1; transform:scale(1.2) rotate(20deg); } }
+  .twinkle { transform-box:fill-box; transform-origin:center; animation:twinkle 1.5s ease-in-out infinite; }
+  @keyframes headTilt { 0%,100% { transform:rotate(0deg); } 50% { transform:rotate(-5deg); } }
+  .head-tilt { transform-box:fill-box; transform-origin:50% 92%; animation:headTilt 3.2s ease-in-out infinite; }
+  @keyframes sweatDrop { 0% { opacity:0; transform:translateY(-4px); } 30% { opacity:1; } 100% { opacity:0; transform:translateY(9px); } }
+  .sweat { transform-box:fill-box; animation:sweatDrop 1.9s ease-in infinite; }
+  @keyframes bounceSoft { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+  .bounce-soft { transform-box:fill-box; animation:bounceSoft 2.2s ease-in-out infinite; }
+  @keyframes steamUp { 0% { opacity:0; transform:translateY(6px); } 30% { opacity:.8; } 100% { opacity:0; transform:translateY(-14px); } }
+  .steam { animation:steamUp 2.6s ease-in-out infinite; }
+
+  /* ------- umum/animasi halaman ------- */
+  @keyframes popIn { from { opacity:0; transform:translateY(14px) scale(.96); } to { opacity:1; transform:none; } }
+  @keyframes pageR { from { opacity:0; transform:translateX(70px); } to { opacity:1; transform:none; } }
+  @keyframes pageL { from { opacity:0; transform:translateX(-70px); } to { opacity:1; transform:none; } }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  @keyframes stampIn { 0% { opacity:0; transform:rotate(-12deg) scale(2.6); } 60% { opacity:1; transform:rotate(-12deg) scale(.94); } 100% { opacity:1; transform:rotate(-12deg) scale(1); } }
+  @keyframes fadeSoft { from { opacity:0; } to { opacity:1; } }
+  .pop { opacity:0; animation:popIn .5s ease forwards; animation-delay:var(--d,0s); }
+  .fadein { opacity:0; animation:fadeSoft .8s ease forwards; animation-delay:var(--d,0s); }
+  .pageIn-r { animation:pageR .38s ease both; }
+  .pageIn-l { animation:pageL .38s ease both; }
+  .drawline { stroke-dasharray:700; stroke-dashoffset:700; animation:draw 1.3s ease forwards; animation-delay:var(--d,0s); }
+  .stamp { animation:stampIn .55s cubic-bezier(.2,1.4,.4,1) both; animation-delay:var(--d,.3s); }
+
+  /* ------- tombol & chip ------- */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.45rem; font-family:'Baloo 2',sans-serif; font-weight:800;
+    border:3px solid var(--ink); border-radius:14px; padding:.5rem 1rem; font-size:.9rem; box-shadow:4px 4px 0 0 var(--ink); transition:.15s; cursor:pointer; background:#fff; }
+  .btn:hover { transform:translate(-1px,-1px); box-shadow:5px 5px 0 0 var(--ink); }
+  .btn:active { transform:translate(3px,3px); box-shadow:1px 1px 0 0 var(--ink); }
+  .btn[disabled] { opacity:.4; pointer-events:none; }
+  .btn-primary { background:linear-gradient(180deg,#FBD34D,#F6B93B); }
+  .btn-crust { background:linear-gradient(180deg,#FBA94C,#F58A21); }
+  .btn-dark { background:#1B140D; color:#FFF3C4; }
+  .chipx { display:inline-flex; align-items:center; gap:.35rem; border:2.5px solid var(--ink); border-radius:999px; padding:.15rem .7rem; font-weight:800; font-size:.72rem; box-shadow:3px 3px 0 0 var(--ink); }
+  .stepcard { border:3px solid var(--ink); border-radius:16px; background:#fff; box-shadow:4px 4px 0 rgba(27,20,13,.85); }
+
+  /* ------- kartu tokoh flip ------- */
+  .flip { perspective:1500px; }
+  .flip-inner { position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.35,.9,.3,1); }
+  .flip.flipped .flip-inner { transform:rotateY(180deg); }
+  .flip-face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:26px; overflow:hidden; }
+  .flip-back { transform:rotateY(180deg); }
+
+  /* ------- reader & explorer ------- */
+  #noteModal { background:rgba(27,20,13,.55); backdrop-filter:blur(3px); }
+  .modal-card { animation:popIn .3s ease both; }
+  .dot { width:.85rem; height:.85rem; border-radius:99px; border:2.5px solid var(--ink); background:#fff; transition:.2s; cursor:pointer; }
+  .dot.on { background:#F58A21; transform:scale(1.25); }
+  .dot.done { background:#FDE68A; }
+  .chapBtn { border:3px solid var(--ink); border-radius:12px; padding:.35rem .7rem; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:.78rem; box-shadow:3px 3px 0 0 var(--ink); background:#fff; white-space:nowrap; transition:.15s; }
+  .chapBtn.on { background:#1B140D; color:#FBD34D; }
+  input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:9px; border-radius:99px; background:#F3E3CE; border:2px solid var(--ink); outline:none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:24px; height:24px; border-radius:50%; background:#fff; border:3.5px solid #F58A21; box-shadow:2px 2px 0 var(--ink); cursor:pointer; }
+  input[type=range]::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:#fff; border:3.5px solid #F58A21; cursor:pointer; }
+  .rowbest { background:linear-gradient(90deg,#FFF6DF,#FFEDC9) !important; }
+  .pt { cursor:pointer; transition:.2s; transform-box:fill-box; transform-origin:center; }
+  .pt:hover { transform:scale(1.2); }
+  @media print { .no-print { display:none !important; } }
+</style>
+</head>
+
+<body class="antialiased">
+
+<!-- ================== HEADER ================== -->
+<header class="relative overflow-hidden border-b-4 border-ink bg-butter-100">
+  <div class="halftone pointer-events-none absolute inset-0 opacity-60"></div>
+  <div class="relative mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <span class="chipx bg-white">🥐 Math-Comic Culinary · Karya Inovasi Pembelajaran</span>
+      <div class="flex gap-2 no-print">
+        <a href="comic-reader.html" class="btn !py-1.5 !px-3 text-xs">📖 Comic Reader</a>
+        <a href="simulator-laba.html" class="btn btn-dark !py-1.5 !px-3 text-xs">🧮 Simulator Laba</a>
+      </div>
+    </div>
+    <div class="mt-4 grid items-center gap-6 lg:grid-cols-3">
+      <div class="lg:col-span-2">
+        <h1 class="font-comic text-3xl font-extrabold leading-tight sm:text-4xl lg:text-[2.9rem]">
+          Digital Comic &amp; <span class="text-crust-500">SPtLDV</span> Learning Platform
+        </h1>
+        <p class="mt-2 max-w-2xl text-sm font-semibold text-wood-600 sm:text-base">
+          Belajar <b>Sistem Pertidaksamaan Linear Dua Variabel</b> lewat komik digital berkarater hidup:
+          ekspresi manga yang berkedip, tersenyum, dan takjub — dipadu <b>Konvensi DHP Bersih</b>:
+          daerah tak layak diarsir, daerah penyelesaian dibiarkan <b>bersih</b> agar titik optimum terlihat jelas.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="chipx bg-crust-300">🎭 karakter beranimasi</span>
+          <span class="chipx bg-butter-200">📖 komik 4 bab</span>
+          <span class="chipx bg-white">🟩 DHP bersih tanpa arsir</span>
+          <span class="chipx bg-white">🎚️ grafik + slider interaktif</span>
+        </div>
+      </div>
+      <div class="flex items-end justify-center gap-3" aria-hidden="true">
+        <div id="heroRian" class="w-32 sm:w-36"></div>
+        <div id="heroAris" class="w-32 sm:w-36"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================== 1. KARTU TOKOH ================== -->
+<section id="tokoh" class="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
+  <div class="flex flex-wrap items-end justify-between gap-2">
+    <div>
+      <span class="chipx bg-crust-300">🎭 Bagian 1</span>
+      <h2 class="font-comic mt-2 text-2xl font-extrabold sm:text-3xl">Kenalan dengan Tokoh</h2>
+      <p class="mt-1 text-sm font-semibold text-wood-500">Kartu profil beranimasi — balik kartunya (hover/ketuk) untuk melihat data lengkap &amp; galeri ekspresi.</p>
+    </div>
+    <span class="chipx bg-white">2 tokoh · 6 ekspresi</span>
+  </div>
+
+  <div class="mt-5 grid gap-6 md:grid-cols-2">
+    <!-- RIAN -->
+    <div class="flip h-[27rem] cursor-pointer select-none" id="flipRian" role="button" tabindex="0" aria-label="Kartu tokoh Rian">
+      <div class="flip-inner">
+        <div class="flip-face comic-border bg-white">
+          <div class="halftone flex h-full flex-col bg-crust-50 p-5">
+            <div class="flex items-center justify-between">
+              <span class="chipx bg-butter-200">TOKOH 01</span>
+              <span class="chipx bg-white">😄 Protagonis</span>
+            </div>
+            <div class="mt-2 flex items-center gap-4">
+              <div id="rianArt" class="w-32 shrink-0 sm:w-36"></div>
+              <div>
+                <h3 class="font-comic text-2xl font-extrabold leading-none">RIAN</h3>
+                <p class="mt-1 text-xs font-bold text-wood-500">Siswa SMK Akuntansi · Peserta Magang D'Pastry Bakery</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <span class="chipx !border-2 bg-white !text-[.62rem]">Ramah</span>
+                  <span class="chipx !border-2 bg-white !text-[.62rem]">Analitis</span>
+                  <span class="chipx !border-2 bg-white !text-[.62rem]">Percaya diri</span>
+                </div>
+              </div>
+            </div>
+            <div class="bubble2 tail-l mt-3 ml-9 bg-butter-50">
+              <p class="font-comic text-[.82rem] font-bold leading-snug">“Dengan metode DHP bersih, daerah solusi jadi terlihat jelas tanpa tertutup arsiran!”</p>
+            </div>
+            <div class="mt-auto pt-3">
+              <div class="text-[.65rem] font-extrabold uppercase tracking-wide text-wood-400">Galeri ekspresi</div>
+              <div id="rianMoods" class="mt-1 flex items-end gap-2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="flip-face flip-back comic-border bg-wood-700 text-cream">
+          <div class="flex h-full flex-col p-5">
+            <span class="chipx w-fit bg-butter-300">📇 DATA TOKOH · RIAN</span>
+            <ul class="mt-3 space-y-2 text-sm font-semibold">
+              <li class="rounded-xl bg-white/10 p-2.5"><b class="text-butter-300">Visual:</b> siswa SMK berambut hitam rapi gaya anime, seragam putih-abu dengan dasi biru, memegang spidol &amp; buku catatan.</li>
+              <li class="rounded-xl bg-white/10 p-2.5"><b class="text-butter-300">Karakter &amp; peran:</b> ramah, analitis, menyukai tantangan, mahir matematika &amp; akuntansi.</li>
+              <li class="rounded-xl bg-white/10 p-2.5"><b class="text-butter-300">Motto:</b> “Dengan metode DHP bersih, daerah solusi jadi terlihat jelas tanpa tertutup arsiran!”</li>
+            </ul>
+            <div class="mt-3 space-y-1.5 text-[.7rem] font-bold">
+              <div class="flex justify-between"><span>Matematika</span><span>95%</span></div>
+              <div class="h-2.5 overflow-hidden rounded-full border-2 border-ink bg-white"><div class="h-full bg-butter-300" style="width:95%"></div></div>
+              <div class="flex justify-between"><span>Akuntansi</span><span>90%</span></div>
+              <div class="h-2.5 overflow-hidden rounded-full border-2 border-ink bg-white"><div class="h-full bg-crust-300" style="width:90%"></div></div>
+              <div class="flex justify-between"><span>Semangat magang</span><span>98%</span></div>
+              <div class="h-2.5 overflow-hidden rounded-full border-2 border-ink bg-white"><div class="h-full bg-leaf" style="width:98%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHEF ARIS -->
+    <div class="flip h-[27rem] cursor-pointer select-none" id="flipAris" role="button" tabindex="0" aria-label="Kartu tokoh Chef Aris">
+      <div class="flip-inner">
+        <div class="flip-face comic-border bg-white">
+          <div class="halftone flex h-full flex-col bg-butter-50 p-5">
+            <div class="flex items-center justify-between">
+              <span class="chipx bg-crust-300">TOKOH 02</span>
+              <span class="chipx bg-white">👨‍ Mentor</span>
+            </div>
+            <div class="mt-2 flex items-center gap-4">
+              <div id="arisArt" class="w-32 shrink-0 sm:w-36"></div>
+              <div>
+                <h3 class="font-comic text-2xl font-extrabold leading-none">CHEF ARIS</h3>
+                <p class="mt-1 text-xs font-bold text-wood-500">Pemilik D'Pastry Bakery · Chef profesional</p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  <span class="chipx !border-2 bg-white !text-[.62rem]">Hangat</span>
+                  <span class="chipx !border-2 bg-white !text-[.62rem]">Peduli kualitas</span>
+                  <span class="chipx !border-2 bg-white !text-[.62rem]">Mudah takjub</span>
+                </div>
+              </div>
+            </div>
+            <div class="bubble2 tail-l mt-3 ml-9 bg-crust-50">
+              <p class="font-comic text-[.82rem] font-bold leading-snug">“Kualitas rasa itu penting, tapi perhitungan akurat menentukan kelangsungan usaha!”</p>
+            </div>
+            <div class="mt-auto pt-3">
+              <div class="text-[.65rem] font-extrabold uppercase tracking-wide text-wood-400">Galeri ekspresi</div>
+              <div id="arisMoods" class="mt-1 flex items-end gap-2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="flip-face flip-back comic-border bg-crust-600 text-cream">
+          <div class="flex h-full flex-col p-5">
+            <span class="chipx w-fit bg-butter-300 !text-ink">📇 DATA TOKOH · CHEF ARIS</span>
+            <ul class="mt-3 space-y-2 text-sm font-semibold">
+              <li class="rounded-xl bg-white/10 p-2.5"><b class="text-butter-200">Visual:</b> topi tinggi (toque blanche), jas chef putih berkerah rapi, senyum hangat; ekspresi berubah dari pusing → takjub gembira.</li>
+              <li class="rounded-xl bg-white/10 p-2.5"><b class="text-butter-200">Karakter:</b> berpengalaman di perrotian, hangat, peduli kualitas rasa &amp; keberlanjutan bisnis.</li>
+              <li class="rounded-xl bg-white/10 p-2.5"><b class="text-butter-200">Motto:</b> “Kualitas rasa itu penting, tapi perhitungan akurat menentukan kelangsungan usaha!”</li>
+            </ul>
+            <div class="mt-3 space-y-1.5 text-[.7rem] font-bold">
+              <div class="flex justify-between"><span>Pengalaman roti</span><span>97%</span></div>
+              <div class="h-2.5 overflow-hidden rounded-full border-2 border-ink bg-white"><div class="h-full bg-butter-300" style="width:97%"></div></div>
+              <div class="flex justify-between"><span>Kualitas rasa</span><span>96%</span></div>
+              <div class="h-2.5 overflow-hidden rounded-full border-2 border-ink bg-white"><div class="h-full bg-crust-300" style="width:96%"></div></div>
+              <div class="flex justify-between"><span>Perhitungan bahan (butuh Rian!)</span><span>55%</span></div>
+              <div class="h-2.5 overflow-hidden rounded-full border-2 border-ink bg-white"><div class="h-full bg-jam" style="width:55%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== 2. E-COMIC READER ================== -->
+<section id="reader" class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+  <div class="flex flex-wrap items-end justify-between gap-2">
+    <div>
+      <span class="chipx bg-crust-300">📖 Bagian 2</span>
+      <h2 class="font-comic mt-2 text-2xl font-extrabold sm:text-3xl">E-Comic Reader · 4 Bab SPtLDV &amp; DHP Bersih</h2>
+      <p class="mt-1 text-sm font-semibold text-wood-500">Next/Prev, lompat bab, keyboard ← →, swipe di HP, sound FX &amp; efek visual komik.</p>
+    </div>
+    <div class="flex gap-2 no-print">
+      <button id="tgSfx" class="btn !py-2 text-xs" aria-pressed="true">🔊 Sound FX: ON</button>
+      <button id="tgFx" class="btn !py-2 text-xs" aria-pressed="true">✨ Efek Komik: ON</button>
+    </div>
+  </div>
+
+  <div class="comic-border sticky top-2 z-30 mt-4 rounded-2xl bg-paper p-3 no-print">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <button id="btnPrev" class="btn !py-2 !px-3 text-sm" aria-label="Halaman sebelumnya">◀</button>
+        <div class="text-center">
+          <div class="font-comic text-sm font-extrabold leading-none mono" id="pageLabel">Hal 1 / 17</div>
+          <div class="text-[.62rem] font-bold uppercase tracking-wide text-wood-400" id="chapLabel">Sampul</div>
+        </div>
+        <button id="btnNext" class="btn btn-primary !py-2 !px-3 text-sm" aria-label="Halaman berikutnya">▶</button>
+      </div>
+      <div class="flex items-center gap-1.5 overflow-x-auto" id="chapJump" role="group" aria-label="Lompat ke bab"></div>
+      <button id="btnFull" class="btn !py-2 !px-3 text-xs" title="Layar penuh">⛶</button>
+    </div>
+    <div class="mt-2.5 flex items-center gap-3">
+      <div class="h-3 flex-1 overflow-hidden rounded-full border-2 border-ink bg-white">
+        <div id="readBar" class="h-full bg-gradient-to-r from-butter-300 to-crust-400 transition-all duration-500" style="width:6%"></div>
+      </div>
+      <div class="flex items-center gap-1.5" id="dotRail" aria-label="Navigasi halaman"></div>
+    </div>
+  </div>
+
+  <div id="pageView" class="comic-border relative mt-5 min-h-[34rem] overflow-hidden rounded-3xl bg-paper" aria-live="polite"></div>
+
+  <div class="mt-4 flex flex-wrap items-center justify-between gap-3 no-print">
+    <button id="btnPrev2" class="btn">◀ Sebelumnya</button>
+    <div class="text-center text-[.7rem] font-bold text-wood-400">💡 <kbd class="rounded border-2 border-ink bg-white px-1">←</kbd> <kbd class="rounded border-2 border-ink bg-white px-1">→</kbd> pindah halaman · <kbd class="rounded border-2 border-ink bg-white px-1">Esc</kbd> tutup catatan</div>
+    <button id="btnNext2" class="btn btn-primary">Selanjutnya ▶</button>
+  </div>
+</section>
+
+<!-- ================== 3. EKSPLORATOR DHP BERSIH ================== -->
+<section id="explorer" class="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+  <div class="flex flex-wrap items-end justify-between gap-2">
+    <div>
+      <span class="chipx bg-crust-300">📈 Bagian 3</span>
+      <h2 class="font-comic mt-2 text-2xl font-extrabold sm:text-3xl">Eksplorator Grafik · Konvensi DHP Bersih</h2>
+      <p class="mt-1 max-w-3xl text-sm font-semibold text-wood-500">
+        Daerah yang <b>tidak memenuhi</b> kendala diarsir lembut; daerah yang memenuhi semua kendala dibiarkan
+        <b>BERSIH tanpa arsiran</b> — itulah DHP. Geser stok bahan &amp; garis uji laba, klik titik pojoknya!
+      </p>
+    </div>
+    <span class="chipx bg-leaf/15 !border-leaf !text-leaf" style="box-shadow:3px 3px 0 #2F855A">🟩 DHP = wilayah bersih</span>
+  </div>
+
+  <div class="mt-5 grid gap-5 lg:grid-cols-5">
+    <div class="comic-border rounded-3xl bg-paper p-4 sm:p-5 lg:col-span-3">
+      <div id="expGraph" class="overflow-hidden rounded-2xl border-[3px] border-ink bg-white"></div>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2">
+        <label class="stepcard block p-3">
+          <span class="flex justify-between text-sm font-extrabold">🌾 Stok Tepung <span class="mono text-crust-500"><span id="vF">20</span> kg</span></span>
+          <input id="slF" type="range" min="4" max="30" step="1" value="20" class="mt-2" aria-label="Stok tepung">
+          <span class="math mt-1 block text-xs font-bold text-wood-500" id="eqF">x + 2y ≤ 20</span>
+        </label>
+        <label class="stepcard block p-3">
+          <span class="flex justify-between text-sm font-extrabold">🧈 Stok Mentega <span class="mono text-butter-600"><span id="vB">16</span> kg</span></span>
+          <input id="slB" type="range" min="4" max="30" step="1" value="16" class="mt-2" aria-label="Stok mentega">
+          <span class="math mt-1 block text-xs font-bold text-wood-500" id="eqB">2x + y ≤ 16</span>
+        </label>
+        <label class="stepcard block p-3 sm:col-span-2">
+          <span class="flex justify-between text-sm font-extrabold">🔎 Garis uji laba (garis selidik) <span class="mono text-purple-600" id="vZ">Rp0</span></span>
+          <input id="slZ" type="range" min="0" max="60000" step="1000" value="0" class="mt-2" aria-label="Nilai Z garis uji">
+          <span class="mt-1 block text-xs font-bold text-wood-500">Geser sampai garis menyentuh titik terjauh DHP → di situlah laba maksimum.</span>
+        </label>
+      </div>
+      <div class="mt-3 flex flex-wrap gap-2 no-print">
+        <button id="btnZmax" class="btn btn-crust !py-2 text-xs">⚡ Ke laba maksimum</button>
+        <button id="btnReset" class="btn !py-2 text-xs">↺ Reset kondisi</button>
+        <label class="chipx cursor-pointer bg-white"><input id="tgShade" type="checkbox" checked class="mr-1 h-3.5 w-3.5"> arsir daerah tak layak</label>
+        <label class="chipx cursor-pointer bg-white"><input id="tgPts" type="checkbox" checked class="mr-1 h-3.5 w-3.5"> titik pojok</label>
+      </div>
+    </div>
+
+    <div class="space-y-4 lg:col-span-2">
+      <div class="stepcard bg-leaf/10 p-4" style="border-color:#2F855A">
+        <h3 class="font-comic text-lg font-extrabold text-leaf">🟩 Aturan Konvensi DHP Bersih</h3>
+        <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm font-semibold text-wood-700">
+          <li>Gambar garis batas setiap kendala dengan jelas.</li>
+          <li>Arsir/warnai lembut daerah yang <b>tidak memenuhi</b> tiap kendala.</li>
+          <li>Wilayah poligon yang <b>tersisa bersih</b> = DHP (daerah layak).</li>
+          <li>Tandai titik pojok DHP: <span class="math">O, A, B, C</span> — calon titik optimum.</li>
+        </ol>
+      </div>
+      <div id="expInfo" class="stepcard p-4"></div>
+      <div id="expVerdict" class="stepcard p-4"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== MODAL CATATAN ================== -->
+<div id="noteModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
+  <div class="modal-card comic-border relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-paper p-5 sm:p-6">
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div id="noteAv" class="h-14 w-14 shrink-0"></div>
+        <div>
+          <div class="text-[.65rem] font-black uppercase tracking-widest text-crust-500">Catatan Rumus Rian</div>
+          <h3 id="noteTitle" class="font-comic text-xl font-extrabold leading-tight">Rangkuman Materi</h3>
+        </div>
+      </div>
+      <button id="noteClose" class="btn btn-dark !py-1.5 !px-3 text-sm" aria-label="Tutup catatan">✕</button>
+    </div>
+    <div id="noteBody" class="mt-4 space-y-3 text-sm font-semibold text-wood-700"></div>
+    <div class="mt-4 flex justify-end"><button id="noteOk" class="btn btn-primary">Siap, lanjut baca! 👍</button></div>
+  </div>
+</div>
+
+<footer class="border-t-4 border-ink bg-butter-100">
+  <div class="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-6 text-center sm:px-6 md:flex-row md:justify-between md:text-left">
+    <div>
+      <div class="font-comic text-lg font-extrabold">Math-Comic Culinary 🥐</div>
+      <p class="text-xs font-semibold text-wood-500">Digital Comic &amp; SPtLDV Learning Platform · Konvensi DHP Bersih · SMK Jurusan Akuntansi (AKL)</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-2 no-print">
+      <a href="comic-reader.html" class="btn !py-2 text-xs">📖 Comic Reader</a>
+      <a href="simulator-laba.html" class="btn !py-2 text-xs">🧮 Simulator Laba</a>
+      <button id="btnRestart" class="btn !py-2 text-xs">↺ Baca dari awal</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* ==========================================================================
+   MATH-COMIC CULINARY — Digital Comic & SPtLDV Learning Platform
+   Karakter manga beranimasi + komik 4 bab + Eksplorator DHP Bersih
+   ========================================================================== */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const rp = n => 'Rp' + Math.round(n).toLocaleString('id-ID');
+function num0(n) { return (Math.round(n * 100) / 100).toLocaleString('id-ID', { maximumFractionDigits: 2 }); }
+const INK = '#1B140D';
+let UID = 0; const uid = () => 'u' + (++UID);
+
+/* ==========================================================================
+   1. GENERATOR KARAKTER MANGA (ekspresif & beranimasi)
+   mood rian : happy | excited | think | amazed | worried | confident
+   mood aris : calm  | happy   | think | amazed | worried | excited
+   ========================================================================== */
+function eyeOpen(cx, cy, s, look = [0, 0], wide = false) {
+  const ry = wide ? 8.6 : 7.4, ir = wide ? 5 : 4.4;
+  return `<g>
+    <ellipse cx="${cx}" cy="${cy}" rx="6.6" ry="${ry}" fill="#fff" stroke="${INK}" stroke-width="2.2"/>
+    <circle cx="${cx + look[0]}" cy="${cy + look[1]}" r="${ir}" fill="#5A3A22"/>
+    <circle cx="${cx + look[0]}" cy="${cy + look[1]}" r="${ir * .45}" fill="#1B140D"/>
+    <circle cx="${cx + look[0] - 1.6}" cy="${cy + look[1] - 2}" r="1.7" fill="#fff"/>
+    <path d="M${cx - 7} ${cy - ry + 1.5} Q${cx} ${cy - ry - 3.4} ${cx + 7} ${cy - ry + 1.5}" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linecap="round"/>
+  </g>`;
+}
+function eyeClosedHappy(cx, cy) {
+  return `<path d="M${cx - 6.5} ${cy + 2} Q${cx} ${cy - 6} ${cx + 6.5} ${cy + 2}" fill="none" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/>`;
+}
+function lids(x1, x2, y, delay) {   // kelopak mata berkedip
+  return `<g class="blink-lid" style="animation-delay:${delay}s">
+    <rect x="${x1}" y="${y}" width="15" height="17" rx="4" fill="#FFE0C2"/>
+    <rect x="${x2}" y="${y}" width="15" height="17" rx="4" fill="#FFE0C2"/></g>`;
+}
+function sparkle(x, y, s, d) {
+  return `<path class="twinkle" style="animation-delay:${d}s" d="M${x} ${y - s} L${x + s * .3} ${y - s * .3} L${x + s} ${y} L${x + s * .3} ${y + s * .3} L${x} ${y + s} L${x - s * .3} ${y + s * .3} L${x - s} ${y} L${x - s * .3} ${y - s * .3} Z" fill="#FBD34D" stroke="${INK}" stroke-width="1.6"/>`;
+}
+function sweat(x, y) {
+  return `<path class="sweat" d="M${x} ${y} c5 7 5 12 0 15 c-5 -3 -5 -8 0 -15z" fill="#BFE3F2" stroke="${INK}" stroke-width="2.2"/>`;
+}
+function bulb(x, y) {
+  return `<g class="twinkle" style="animation-delay:.4s"><circle cx="${x}" cy="${y}" r="7" fill="#FBD34D" stroke="${INK}" stroke-width="2.4"/>
+    <path d="M${x - 3} ${y + 8} h6 M${x - 2.4} ${y + 11} h4.8" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>
+    <path d="M${x} ${y - 12} v-3 M${x - 10} ${y - 6} l-3 -2 M${x + 10} ${y - 6} l3 -2" stroke="#F6B93B" stroke-width="2.4" stroke-linecap="round"/></g>`;
+}
+
+function charRian(mood = 'happy', delay = 0) {
+  const M = {
+    happy:     { brow: 'M45 68 Q52 64 59 67 M71 67 Q78 64 85 68', eye: 'open',  look: [0, .5], mouth: 'M56 95 C60 104 70 104 74 95 Z', mf: '#8C4A3C', pose: 'wave' },
+    excited:   { brow: 'M45 66 Q52 61 59 65 M71 65 Q78 61 85 66', eye: 'closed', look: [0, 0],  mouth: 'M55 93 C59 106 71 106 75 93 Z', mf: '#8C4A3C', pose: 'wave', extra: 'spark' },
+    think:     { brow: 'M45 68 Q52 66 59 68 M71 65 Q78 62 85 66', eye: 'open',  look: [-1.5, -2.5], mouth: 'M60 98 Q65 95 70 98', mf: 'none', pose: 'note', extra: 'bulb', tilt: true },
+    amazed:    { brow: 'M45 64 Q52 60 59 64 M71 64 Q78 60 85 64', eye: 'wide',  look: [0, 0],  mouth: 'ellipse', mf: '#8C4A3C', pose: 'wave', extra: 'spark' },
+    worried:   { brow: 'M46 66 L58 70 M84 66 L72 70',             eye: 'open',  look: [1, 1],  mouth: 'M56 98 Q60 94 65 98 Q70 102 74 98', mf: 'none', pose: 'note', extra: 'sweat' },
+    confident: { brow: 'M45 67 Q52 64 59 67 M71 64 Q78 62 85 66', eye: 'open',  look: [1, 0],  mouth: 'M57 96 Q65 102 73 96', mf: 'none', pose: 'point' }
+  }[mood] || {};
+  const eyes = M.eye === 'closed'
+    ? eyeClosedHappy(52, 80) + eyeClosedHappy(78, 80)
+    : eyeOpen(52, 80, 1, M.look, M.eye === 'wide') + eyeOpen(78, 80, 1, M.look, M.eye === 'wide');
+  const mouth = M.mouth === 'ellipse'
+    ? `<ellipse cx="65" cy="99" rx="6" ry="7.4" fill="${M.mf}" stroke="${INK}" stroke-width="2.6"/><path d="M60 96 h10" stroke="#fff" stroke-width="2.6"/>`
+    : `<path d="${M.mouth}" fill="${M.mf === 'none' ? 'none' : M.mf}" stroke="${INK}" stroke-width="2.8" stroke-linecap="round"/>`;
+  const pose = M.pose === 'wave' ? `
+    <g class="wave-arm" style="animation-delay:${delay}s">
+      <path d="M88 130 L108 102 L116 108 L96 136 Z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="113" cy="100" r="7" fill="#FFE0C2" stroke="${INK}" stroke-width="2.6"/>
+      <g transform="rotate(24 113 92)"><rect x="109" y="76" width="8" height="20" rx="3" fill="#C2453C" stroke="${INK}" stroke-width="2.4"/><rect x="109" y="73" width="8" height="5" rx="2" fill="#1B140D"/></g>
+    </g>`
+    : M.pose === 'point' ? `
+    <g><path d="M90 128 L116 114 L120 122 L94 136 Z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="120" cy="116" r="6.5" fill="#FFE0C2" stroke="${INK}" stroke-width="2.6"/>
+      <path d="M124 112 l7 -5" stroke="#FFE0C2" stroke-width="5" stroke-linecap="round"/><path d="M124 112 l7 -5" stroke="${INK}" stroke-width="2.2" stroke-linecap="round" opacity=".5"/></g>`
+    : `
+    <g><path d="M88 130 L96 148 L88 154 L80 136 Z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="86" cy="152" r="6.5" fill="#FFE0C2" stroke="${INK}" stroke-width="2.6"/>
+      <g transform="rotate(-8 78 152)"><rect x="66" y="144" width="24" height="17" rx="3" fill="#C2453C" stroke="${INK}" stroke-width="2.6"/><rect x="69" y="147" width="18" height="11" rx="2" fill="#FFFDF6"/><path d="M72 151h12M72 155h9" stroke="${INK}" stroke-width="1.6"/></g></g>`;
+  const extra = M.extra === 'spark' ? sparkle(30, 40, 6, .2) + sparkle(102, 52, 5, .8)
+    : M.extra === 'sweat' ? sweat(94, 62)
+    : M.extra === 'bulb' ? bulb(104, 42) : '';
+  return `<svg viewBox="0 0 130 170" class="block h-auto w-full" role="img" aria-label="Rian ekspresi ${mood}">
+    <g class="breathe" style="animation-delay:${delay}s">
+      <path d="M35 170 C36 132 46 120 65 120 C84 120 94 132 95 170 Z" fill="#FFFFFF" stroke="${INK}" stroke-width="3"/>
+      <path d="M35 170 C36 140 42 128 50 125 L50 170 Z" fill="#A8B0BA" stroke="${INK}" stroke-width="2.6"/>
+      <path d="M95 170 C94 140 88 128 80 125 L80 170 Z" fill="#A8B0BA" stroke="${INK}" stroke-width="2.6"/>
+      <path d="M56 121 L65 132 L74 121" fill="none" stroke="${INK}" stroke-width="2.6"/>
+      <path d="M65 130 L60 137 L65 160 L70 137 Z" fill="#2E5FA3" stroke="${INK}" stroke-width="2.4"/>
+      <rect x="61" y="127" width="8" height="6" rx="2" fill="#2E5FA3" stroke="${INK}" stroke-width="2"/>
+      <rect x="59" y="110" width="12" height="13" rx="4" fill="#FFE0C2" stroke="${INK}" stroke-width="2.6"/>
+      ${pose}
+    </g>
+    <g class="${M.tilt ? 'head-tilt' : ''}">
+      <circle cx="39" cy="82" r="5.4" fill="#FFE0C2" stroke="${INK}" stroke-width="2.6"/>
+      <circle cx="91" cy="82" r="5.4" fill="#FFE0C2" stroke="${INK}" stroke-width="2.6"/>
+      <ellipse cx="65" cy="80" rx="26" ry="24.5" fill="#FFE0C2" stroke="${INK}" stroke-width="3"/>
+      <path d="M37 74 C35 40 50 27 65 27 C80 27 95 40 93 74 C86 58 78 52 65 52 C52 52 44 58 37 74 Z" fill="#23262E" stroke="${INK}" stroke-width="3"/>
+      <path d="M42 56 L48 64 L54 55 L60 65 L66 55 L72 64 L78 55 L84 62 L88 56 C80 50 50 50 42 56 Z" fill="#23262E" stroke="${INK}" stroke-width="2.4"/>
+      <path d="M37 70 C35 82 37 92 42 97 C40 86 40 78 42 70 Z" fill="#23262E" stroke="${INK}" stroke-width="2.4"/>
+      <path d="M93 70 C95 82 93 92 88 97 C90 86 90 78 88 70 Z" fill="#23262E" stroke="${INK}" stroke-width="2.4"/>
+      <path d="M50 38 C57 33 68 32 75 36" fill="none" stroke="#7C8698" stroke-width="3" stroke-linecap="round"/>
+      <g transform="translate(0,4)"><path d="${M.brow}" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/></g>
+      ${eyes}
+      ${M.eye !== 'closed' ? lids(45, 71, 71, delay) : ''}
+      <ellipse cx="46" cy="91" rx="4.6" ry="2.6" fill="#F79A8A" opacity=".55"/>
+      <ellipse cx="84" cy="91" rx="4.6" ry="2.6" fill="#F79A8A" opacity=".55"/>
+      <path d="M63 88 Q65 90 67 88" fill="none" stroke="#E5B08C" stroke-width="2"/>
+      ${mouth}
+      ${extra}
+    </g>
+  </svg>`;
+}
+
+function charAris(mood = 'calm', delay = 0) {
+  const M = {
+    calm:    { brow: 'M46 66 Q53 63 60 66 M70 66 Q77 63 84 66', eye: 'open',   look: [0, .5], mouth: 'M56 97 Q65 104 74 97', mf: 'none', pose: 'tray' },
+    happy:   { brow: 'M46 65 Q53 61 60 65 M70 65 Q77 61 84 65', eye: 'closed', look: [0, 0],  mouth: 'M54 95 C59 106 71 106 76 95 Z', mf: '#8C4A3C', pose: 'tray', extra: 'spark' },
+    think:   { brow: 'M46 66 Q53 64 60 66 M70 63 Q77 60 84 64', eye: 'open',   look: [-1.5, -2.5], mouth: 'M60 99 Q65 96 70 99', mf: 'none', pose: 'clip', extra: 'bulb', tilt: true },
+    amazed:  { brow: 'M46 62 Q53 58 60 62 M70 62 Q77 58 84 62', eye: 'wide',   look: [0, 0],  mouth: 'ellipse', mf: '#8C4A3C', pose: 'spoon', extra: 'spark' },
+    worried: { brow: 'M47 64 L59 68 M83 64 L71 68',             eye: 'open',   look: [1, 1],  mouth: 'M56 99 Q60 95 65 99 Q70 103 74 99', mf: 'none', pose: 'clip', extra: 'sweat' },
+    excited: { brow: 'M46 63 Q53 59 60 63 M70 63 Q77 59 84 63', eye: 'closed', look: [0, 0],  mouth: 'M55 94 C59 106 71 106 75 94 Z', mf: '#8C4A3C', pose: 'spoon', extra: 'spark' }
+  }[mood] || {};
+  const skin = '#F2C29B';
+  const eyes = M.eye === 'closed'
+    ? eyeClosedHappy(53, 78) + eyeClosedHappy(77, 78)
+    : eyeOpen(53, 78, 1, M.look, M.eye === 'wide').replaceAll('#FFE0C2', skin).replaceAll('#5A3A22', '#3E2A1C')
+      + eyeOpen(77, 78, 1, M.look, M.eye === 'wide').replaceAll('#FFE0C2', skin).replaceAll('#5A3A22', '#3E2A1C');
+  const lidsA = M.eye !== 'closed' ? `<g class="blink-lid" style="animation-delay:${delay}s">
+      <rect x="46" y="69" width="15" height="17" rx="4" fill="${skin}"/><rect x="70" y="69" width="15" height="17" rx="4" fill="${skin}"/></g>` : '';
+  const mouth = M.mouth === 'ellipse'
+    ? `<ellipse cx="65" cy="100" rx="6" ry="7.2" fill="${M.mf}" stroke="${INK}" stroke-width="2.6"/><path d="M60 97 h10" stroke="#fff" stroke-width="2.6"/>`
+    : `<path d="${M.mouth}" fill="${M.mf === 'none' ? 'none' : M.mf}" stroke="${INK}" stroke-width="2.8" stroke-linecap="round"/>`;
+  const pose = M.pose === 'spoon' ? `
+    <g class="wave-arm" style="animation-delay:${delay}s">
+      <path d="M89 130 L109 103 L117 109 L97 136 Z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="114" cy="101" r="7" fill="${skin}" stroke="${INK}" stroke-width="2.6"/>
+      <g transform="rotate(20 114 92)"><path d="M112 92 V74" stroke="#B98F62" stroke-width="5" stroke-linecap="round"/><ellipse cx="112" cy="68" rx="6" ry="8" fill="#D6B895" stroke="${INK}" stroke-width="2.4"/></g>
+    </g>`
+    : M.pose === 'tray' ? `
+    <g><path d="M91 130 L114 122 L117 130 L94 138 Z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="118" cy="124" r="6.5" fill="${skin}" stroke="${INK}" stroke-width="2.6"/>
+      <ellipse cx="112" cy="116" rx="17" ry="5" fill="#D6B895" stroke="${INK}" stroke-width="2.6"/>
+      <path d="M102 112 c2 -7 7 -9 10 -9 s8 2 10 9 z" fill="#F6C177" stroke="${INK}" stroke-width="2.4"/></g>`
+    : `
+    <g><path d="M89 132 L95 149 L87 155 L81 138 Z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="87" cy="153" r="6.5" fill="${skin}" stroke="${INK}" stroke-width="2.6"/>
+      <g transform="rotate(-6 78 152)"><rect x="64" y="142" width="26" height="20" rx="3" fill="#8A5A34" stroke="${INK}" stroke-width="2.6"/><rect x="67" y="145" width="20" height="14" rx="2" fill="#FFFDF6"/><path d="M70 149h14M70 153h10" stroke="${INK}" stroke-width="1.6"/></g></g>`;
+  const extra = M.extra === 'spark' ? sparkle(28, 44, 6, .3) + sparkle(104, 56, 5, .9)
+    : M.extra === 'sweat' ? sweat(95, 60)
+    : M.extra === 'bulb' ? bulb(105, 44) : '';
+  return `<svg viewBox="0 0 130 170" class="block h-auto w-full" role="img" aria-label="Chef Aris ekspresi ${mood}">
+    <g class="breathe" style="animation-delay:${delay}s">
+      <path d="M33 170 C34 130 46 118 65 118 C84 118 96 130 97 170 Z" fill="#FFFFFF" stroke="${INK}" stroke-width="3"/>
+      <path d="M52 120 L65 134 L78 120" fill="none" stroke="${INK}" stroke-width="2.6"/>
+      <path d="M58 120 L72 120 L65 131 Z" fill="#C2453C" stroke="${INK}" stroke-width="2.4"/>
+      <path d="M65 134 V170" stroke="${INK}" stroke-width="2.2"/>
+      <circle cx="56" cy="142" r="2.6" fill="#D9D9D9" stroke="${INK}" stroke-width="1.8"/><circle cx="56" cy="154" r="2.6" fill="#D9D9D9" stroke="${INK}" stroke-width="1.8"/>
+      <circle cx="74" cy="142" r="2.6" fill="#D9D9D9" stroke="${INK}" stroke-width="1.8"/><circle cx="74" cy="154" r="2.6" fill="#D9D9D9" stroke="${INK}" stroke-width="1.8"/>
+      ${pose}
+    </g>
+    <g class="${M.tilt ? 'head-tilt' : ''}">
+      <circle cx="40" cy="80" r="5.2" fill="${skin}" stroke="${INK}" stroke-width="2.6"/>
+      <circle cx="90" cy="80" r="5.2" fill="${skin}" stroke="${INK}" stroke-width="2.6"/>
+      <ellipse cx="65" cy="78" rx="25" ry="23.5" fill="${skin}" stroke="${INK}" stroke-width="3"/>
+      <path d="M41 70 C40 62 42 58 45 56 M89 70 C90 62 88 58 85 56" fill="none" stroke="#6B5643" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="50" cy="32" r="10" fill="#fff" stroke="${INK}" stroke-width="3"/>
+      <circle cx="65" cy="27" r="12" fill="#fff" stroke="${INK}" stroke-width="3"/>
+      <circle cx="80" cy="32" r="10" fill="#fff" stroke="${INK}" stroke-width="3"/>
+      <rect x="42" y="36" width="46" height="13" rx="6.5" fill="#fff" stroke="${INK}" stroke-width="3"/>
+      <path d="M46 42 h38" stroke="#E4E4E4" stroke-width="2.4"/>
+      <path d="${M.brow}" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+      ${eyes}
+      ${lidsA}
+      <path d="M52 88 C57 84 62 86 65 89 C68 86 73 84 78 88 C74 93 68 93 65 91 C62 93 56 93 52 88 Z" fill="#5A4632" stroke="${INK}" stroke-width="2.4"/>
+      <ellipse cx="46" cy="88" rx="4.2" ry="2.4" fill="#E8927C" opacity=".5"/>
+      <ellipse cx="84" cy="88" rx="4.2" ry="2.4" fill="#E8927C" opacity=".5"/>
+      ${mouth}
+      ${extra}
+    </g>
+  </svg>`;
+}
+const CHAR = { rian: charRian, aris: charAris };
+const figure = (who, mood, cls = '', delay = 0) =>
+  `<div class="pointer-events-none absolute ${cls}" aria-hidden="true">${CHAR[who](mood, delay)}</div>`;
+
+/* ==========================================================================
+   2. LATAR ADEGAN & KOMPONEN PANEL KOMIK
+   ========================================================================== */
+function bgKitchen() {
+  return `<svg viewBox="0 0 400 200" class="block w-full" role="img" aria-label="Dapur D'Pastry Bakery pagi hari">
+    <rect width="400" height="200" fill="#FFF3E0"/>
+    <rect y="146" width="400" height="54" fill="#E6D2BC"/>
+    <rect x="22" y="20" width="84" height="64" rx="6" fill="#BFE3F2" stroke="${INK}" stroke-width="4"/>
+    <path d="M64 20v64M22 52h84" stroke="${INK}" stroke-width="3"/>
+    <circle cx="50" cy="40" r="12" fill="#FBD34D" stroke="${INK}" stroke-width="3"/>
+    <g stroke="#F6B93B" stroke-width="3" stroke-linecap="round"><path d="M50 22v-6M32 40h-6M74 40h-4M36 26l-4-4M68 26l4-4"/></g>
+    <rect x="146" y="14" width="118" height="34" rx="8" fill="#8A5A34" stroke="${INK}" stroke-width="4"/>
+    <text x="205" y="37" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="19" font-weight="800" fill="#FBD34D">D'PASTRY</text>
+    <rect x="290" y="56" width="88" height="90" rx="8" fill="#B98F62" stroke="${INK}" stroke-width="4"/>
+    <rect x="302" y="70" width="64" height="40" rx="6" fill="#412818" stroke="${INK}" stroke-width="3"/>
+    <rect x="310" y="78" width="48" height="24" rx="4" fill="#F58A21" opacity=".85"/>
+    <g stroke="#B98F62" stroke-width="4" stroke-linecap="round" fill="none" class="steam"><path d="M320 50c-3-6 2-9 3-13M338 50c-3-6 2-9 3-13M354 50c-3-6 2-9 3-13"/></g>
+    <rect x="18" y="118" width="240" height="15" rx="6" fill="#8A5A34" stroke="${INK}" stroke-width="4"/>
+    <rect x="32" y="94" width="34" height="24" rx="5" fill="#FDE68A" stroke="${INK}" stroke-width="3"/>
+    <rect x="78" y="88" width="26" height="30" rx="5" fill="#FFC48A" stroke="${INK}" stroke-width="3"/>
+    <path d="M128 116c2-14 10-20 22-20s20 6 22 20z" fill="#F6C177" stroke="${INK}" stroke-width="3"/>
+    <rect x="194" y="98" width="40" height="20" rx="4" fill="#fff" stroke="${INK}" stroke-width="3"/>
+    <path d="M200 106h28M200 112h20" stroke="${INK}" stroke-width="2.5"/>
+  </svg>`;
+}
+function bgPantry() {
+  return `<svg viewBox="0 0 400 200" class="block w-full" role="img" aria-label="Lemari bahan baku dengan stok terbatas">
+    <rect width="400" height="200" fill="#FDEFD8"/>
+    <rect x="30" y="14" width="340" height="172" rx="10" fill="#D6B895" stroke="${INK}" stroke-width="4"/>
+    <path d="M30 74h340M30 132h340" stroke="${INK}" stroke-width="4"/>
+    <path d="M56 70c0-20 12-30 30-30s30 10 30 30z" fill="#FFFDF6" stroke="${INK}" stroke-width="3.5"/>
+    <rect x="68" y="44" width="36" height="14" rx="4" fill="#FDE68A" stroke="${INK}" stroke-width="2.5"/>
+    <text x="86" y="55" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="10" font-weight="800" fill="${INK}">TEPUNG</text>
+    <rect x="130" y="40" width="46" height="30" rx="6" fill="#FBD34D" stroke="${INK}" stroke-width="3.5"/>
+    <text x="153" y="59" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="10" font-weight="800" fill="${INK}">MENTEGA</text>
+    <rect x="56" y="92" width="72" height="26" rx="6" fill="#fff" stroke="${INK}" stroke-width="3"/>
+    <text x="92" y="110" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="14" font-weight="800" fill="#C2453C">20 kg</text>
+    <rect x="142" y="92" width="72" height="26" rx="6" fill="#fff" stroke="${INK}" stroke-width="3"/>
+    <text x="178" y="110" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="14" font-weight="800" fill="#C2453C">16 kg</text>
+    <path d="M240 96h110M240 112h86" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/>
+    <text x="240" y="82" font-family="Baloo 2,sans-serif" font-size="12" font-weight="800" fill="#8A5A34">catatan pesanan hari ini</text>
+    <text x="200" y="166" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="13" font-weight="800" fill="#8A5A34">“stok hanya cukup untuk sehari produksi!”</text>
+  </svg>`;
+}
+function bgProducts() {
+  return `<svg viewBox="0 0 400 190" class="block w-full" role="img" aria-label="Dua produk: croissant x dan roti sobek y">
+    <rect width="400" height="190" fill="#FFFBEA"/>
+    <g><rect x="26" y="22" width="160" height="146" rx="14" fill="#fff" stroke="${INK}" stroke-width="4"/>
+      <path d="M56 96c4-26 22-38 50-38s46 12 50 38c-14-9-28-13-50-13s-36 4-50 13z" fill="#F6C177" stroke="${INK}" stroke-width="4"/>
+      <path d="M84 66c6 10 6 20 2 30M106 58c2 12 2 24-2 36M128 66c-4 10-4 20-2 30" stroke="#DE9A55" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <text x="106" y="140" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="16" font-weight="800" fill="${INK}">CROISSANT</text>
+      <circle cx="152" cy="42" r="16" fill="#F58A21" stroke="${INK}" stroke-width="3.5"/>
+      <text x="152" y="49" text-anchor="middle" font-family="Cambria Math,Georgia,serif" font-style="italic" font-size="18" font-weight="700" fill="#fff">x</text></g>
+    <g><rect x="214" y="22" width="160" height="146" rx="14" fill="#fff" stroke="${INK}" stroke-width="4"/>
+      <rect x="244" y="74" width="100" height="44" rx="20" fill="#F0B267" stroke="${INK}" stroke-width="4"/>
+      <path d="M274 76v40M314 76v40" stroke="#C97F35" stroke-width="3.5"/>
+      <path d="M252 74c8-12 22-15 42-15s34 3 42 15" fill="#F8D9A8" stroke="${INK}" stroke-width="4"/>
+      <text x="294" y="140" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="16" font-weight="800" fill="${INK}">ROTI SOBEK</text>
+      <circle cx="340" cy="42" r="16" fill="#E59A15" stroke="${INK}" stroke-width="3.5"/>
+      <text x="340" y="49" text-anchor="middle" font-family="Cambria Math,Georgia,serif" font-style="italic" font-size="18" font-weight="700" fill="#fff">y</text></g>
+  </svg>`;
+}
+function bgBoardTable() {
+  const cell = (x, y, w, txt, hl, d) => `<g class="pop" style="--d:${d}s">
+      <rect x="${x}" y="${y}" width="${w}" height="32" fill="${hl || '#fff'}" stroke="${INK}" stroke-width="3"/>
+      <text x="${x + w / 2}" y="${y + 22}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="14" font-weight="800" fill="${INK}">${txt}</text></g>`;
+  return `<svg viewBox="0 0 400 220" class="block w-full" role="img" aria-label="Papan tulis tabel alokasi bahan">
+    <rect width="400" height="220" fill="#FDEFD8"/>
+    <rect x="20" y="12" width="360" height="194" rx="12" fill="#fff" stroke="${INK}" stroke-width="5"/>
+    <rect x="20" y="12" width="360" height="32" rx="12" fill="#FBD34D" stroke="${INK}" stroke-width="5"/>
+    <text x="200" y="34" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="15" font-weight="800" fill="${INK}">TABEL ALOKASI BAHAN BAKU</text>
+    ${cell(36, 56, 110, 'Bahan', '#FFF3C4', .1)}${cell(146, 56, 74, 'Produk x', '#FFE0BF', .2)}${cell(220, 56, 74, 'Produk y', '#FFE0BF', .3)}${cell(294, 56, 70, 'Stok', '#FDE68A', .4)}
+    ${cell(36, 88, 110, '🌾 Tepung', null, .5)}${cell(146, 88, 74, '1 kg', null, .6)}${cell(220, 88, 74, '2 kg', null, .7)}${cell(294, 88, 70, '20 kg', '#FFF3C4', .8)}
+    ${cell(36, 120, 110, '🧈 Mentega', null, .9)}${cell(146, 120, 74, '2 kg', null, 1)}${cell(220, 120, 74, '1 kg', null, 1.1)}${cell(294, 120, 70, '16 kg', '#FFF3C4', 1.2)}
+    <g class="pop" style="--d:1.35s"><rect x="36" y="162" width="328" height="28" rx="8" fill="#1B140D"/>
+      <text x="200" y="181" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="12.5" font-weight="800" fill="#FBD34D">baris bahan × kolom produk = koefisien pertidaksamaan</text></g>
+  </svg>`;
+}
+function bgOven() {
+  return `<svg viewBox="0 0 400 190" class="block w-full" role="img" aria-label="Nampan 4 croissant dan 8 roti sobek keluar dari oven">
+    <rect width="400" height="190" fill="#FFF3E0"/>
+    <g stroke="#B98F62" stroke-width="4" stroke-linecap="round" fill="none" class="steam"><path d="M120 40c-4-8 3-12 4-18M170 36c-4-8 3-12 4-18M230 40c-4-8 3-12 4-18M280 36c-4-8 3-12 4-18"/></g>
+    <rect x="60" y="52" width="280" height="84" rx="14" fill="#D6B895" stroke="${INK}" stroke-width="5"/>
+    <rect x="72" y="64" width="256" height="60" rx="10" fill="#FFFDF6" stroke="${INK}" stroke-width="3.5"/>
+    ${[0, 1, 2, 3].map(i => `<g class="pop" style="--d:${.2 + i * .12}s"><path d="M${88 + i * 34} 100c2-14 10-20 22-20s20 6 22 20c-8-5-15-7-22-7s-14 2-22 7z" fill="#F6C177" stroke="${INK}" stroke-width="3"/></g>`).join('')}
+    ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<g class="pop" style="--d:${.7 + i * .08}s"><rect x="${84 + i * 31}" y="108" width="24" height="13" rx="6.5" fill="#F0B267" stroke="${INK}" stroke-width="2.6"/></g>`).join('')}
+    <text x="200" y="162" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="13.5" font-weight="800" fill="#8A5A34">4 croissant + 8 roti sobek = kombinasi juara!</text>
+  </svg>`;
+}
+function bgCounter() {
+  return `<svg viewBox="0 0 400 150" class="block w-full" role="img" aria-label="Meja kasir dengan buku catatan dan kalkulator">
+    <rect width="400" height="150" fill="#FFF8EC"/>
+    <rect y="96" width="400" height="54" fill="#E6D2BC"/>
+    <rect x="40" y="60" width="120" height="40" rx="6" fill="#C2453C" stroke="${INK}" stroke-width="4"/>
+    <rect x="48" y="66" width="104" height="28" rx="4" fill="#FFFDF6"/>
+    <path d="M56 74h88M56 82h70M56 90h80" stroke="${INK}" stroke-width="2.4"/>
+    <g transform="rotate(-6 250 80)"><rect x="210" y="52" width="80" height="52" rx="8" fill="#412818" stroke="${INK}" stroke-width="4"/>
+      <rect x="218" y="60" width="64" height="16" rx="3" fill="#B8E6C8"/>
+      <text x="276" y="72" text-anchor="end" font-family="Baloo 2,sans-serif" font-size="11" font-weight="800" fill="#1B140D">52000</text>
+      ${[0, 1, 2].map(r => [0, 1, 2, 3].map(c => `<circle cx="${224 + c * 18}" cy="${84 + r * 7}" r="2.6" fill="#FBD34D"/>`).join('')).join('')}</g>
+    <path d="M320 96c0-16 12-26 28-26s28 10 28 26z" fill="#F6C177" stroke="${INK}" stroke-width="3.5"/>
+  </svg>`;
+}
+
+/* ---------- komponen panel ---------- */
+let D = 0; const dReset = () => { D = 0; }; const dNext = (s = .12) => (D += s).toFixed(2);
+function bubble(who, text, side = 'l', extra = '') {
+  const rian = who === 'rian';
+  return `<div class="pop flex items-start gap-2.5 ${side === 'r' ? 'flex-row-reverse' : ''} ${extra}" style="--d:${dNext()}s">
+    <div class="h-12 w-12 shrink-0 overflow-hidden rounded-full border-[3px] border-ink bg-white shadow-comicXs">${CHAR[who](rian ? 'happy' : 'calm', D)}</div>
+    <div class="bubble2 tail-${side} min-w-0 flex-1">
+      <div class="font-comic text-[.68rem] font-extrabold uppercase tracking-wide ${rian ? 'text-crust-500' : 'text-butter-600'}">${rian ? 'Rian' : 'Chef Aris'}</div>
+      <p class="font-comic text-[.92rem] font-semibold leading-snug text-ink">${text}</p>
+    </div></div>`;
+}
+function narr(text, extra = '') {
+  return `<div class="caption pop text-[.85rem] leading-relaxed text-wood-700 ${extra}" style="--d:${dNext(.1)}s">${text}</div>`;
+}
+function sfx(text, cls = '', size = 'text-3xl') {
+  return `<div class="sfx-sticker fx ${size} ${cls}" aria-hidden="true">${text}</div>`;
+}
+function panel(inner, cls = '') {
+  return `<div class="comic-border-sm relative overflow-hidden rounded-2xl bg-white ${cls}">${inner}</div>`;
+}
+function stage(bg, figures = [], stickers = '', cls = '') {
+  return panel(`<div class="relative ${cls}">${bg}${figures.join('')}${stickers}</div>`);
+}
+function noteBtn(ch, label = '📝 Lihat Catatan Rumus Rian') {
+  return `<button class="btn btn-crust w-full !py-2.5 text-sm" data-note="${ch}">${label}</button>`;
+}
+function chapChip(ch, title) {
+  const names = { 0: 'SAMPUL', 1: 'BAB 1', 2: 'BAB 2', 3: 'BAB 3', 4: 'BAB 4' };
+  return `<div class="flex flex-wrap items-center justify-between gap-2">
+    <span class="chipx ${ch ? 'bg-crust-300' : 'bg-butter-200'}">${names[ch]} ${title ? '· ' + title : ''}</span>
+    <span class="chipx bg-white">DHP Bersih</span></div>`;
+}
+
+/* ==========================================================================
+   3. CATATAN RUMUS RIAN
+   ========================================================================== */
+const NOTES = {
+  1: { title: 'BAB 1 · Informasi Penting & Variabel', html: `
+    <ul class="space-y-2">
+      <li class="stepcard p-3">📌 <b>Data:</b> stok tepung <b>20 kg</b>, mentega <b>16 kg</b>; produk croissant (x) &amp; roti sobek (y).</li>
+      <li class="stepcard p-3">🔤 <b>Variabel:</b> <span class="math">x</span> = banyak croissant, <span class="math">y</span> = banyak roti sobek (bilangan cacah).</li>
+      <li class="stepcard p-3">🧩 <b>Resep:</b> croissant = 1 kg tepung + 2 kg mentega; roti sobek = 2 kg tepung + 1 kg mentega.</li>
+      <li class="stepcard bg-butter-50 p-3">💡 <b>Kata kunci:</b> “terbatas / paling banyak” → <span class="math">≤</span>; “minimal” → <span class="math">≥</span>.</li>
+    </ul>` },
+  2: { title: 'BAB 2 · Tabel Alokasi → Model Matematika', html: `
+    <div class="stepcard overflow-x-auto p-3">
+      <table class="w-full text-center text-sm"><thead><tr class="border-b-2 border-ink"><th class="p-1.5">Bahan</th><th class="p-1.5">Produk x</th><th class="p-1.5">Produk y</th><th class="p-1.5">Stok</th></tr></thead>
+      <tbody class="mono"><tr class="border-b border-wood-200"><td class="p-1.5 text-left">Tepung</td><td>1</td><td>2</td><td>≤ 20</td></tr>
+      <tr><td class="p-1.5 text-left">Mentega</td><td>2</td><td>1</td><td>≤ 16</td></tr></tbody></table>
+    </div>
+    <ul class="space-y-2">
+      <li class="stepcard p-3">🌾 Tepung: <span class="math">x + 2y ≤ 20</span> · 🧈 Mentega: <span class="math">2x + y ≤ 16</span> · ⚖️ <span class="math">x ≥ 0, y ≥ 0</span></li>
+      <li class="stepcard bg-crust-50 p-3">💰 Fungsi tujuan: <span class="math">Z = 5.000x + 4.000y</span> (laba croissant Rp5.000, roti sobek Rp4.000).</li>
+    </ul>` },
+  3: { title: 'BAB 3 · Konvensi DHP Bersih & Titik B', html: `
+    <ul class="space-y-2">
+      <li class="stepcard p-3">✏️ <b>Titik potong:</b> <span class="math">x + 2y = 20</span> → (20,0) &amp; (0,10); <span class="math">2x + y = 16</span> → (8,0) &amp; (0,16).</li>
+      <li class="stepcard bg-leaf/10 p-3" style="border-color:#2F855A">🟩 <b>Konvensi DHP Bersih:</b> arsir/warnai daerah yang <b>TIDAK memenuhi</b> tiap kendala. Wilayah poligon yang <b>tersisa bersih tanpa arsiran</b> itulah DHP: pojok <span class="math">O(0,0), A(8,0), B(4,8), C(0,10)</span>.</li>
+      <li class="stepcard p-3">🧮 <b>Eliminasi:</b> <span class="math">x + 2y = 20 |×2| → 2x + 4y = 40</span>; kurangi <span class="math">2x + y = 16</span> → <span class="math">3y = 24 → y = 8</span>; <b>substitusi:</b> <span class="math">x = 20 − 16 = 4</span> → <b>B(4,8)</b>.</li>
+      <li class="stepcard bg-butter-50 p-3">👀 Karena tengah daerah dibiarkan bersih, titik perpotongan B tampak sangat jelas — keunggulan konvensi ini!</li>
+    </ul>` },
+  4: { title: 'BAB 4 · Uji Titik Pojok & Kesimpulan', html: `
+    <ul class="space-y-2">
+      <li class="stepcard p-3">🏁 <b>Teorema titik pojok:</b> nilai optimum fungsi tujuan dicapai di titik pojok DHP.</li>
+      <li class="stepcard overflow-x-auto p-3"><table class="w-full text-sm mono"><thead><tr class="border-b-2 border-ink"><th class="p-1 text-left">Titik</th><th class="p-1 text-left">Z = 5.000x + 4.000y</th><th class="p-1">Hasil</th></tr></thead>
+        <tbody><tr><td class="p-1">O(0,0)</td><td class="p-1">0 + 0</td><td class="p-1">Rp0</td></tr>
+        <tr><td class="p-1">A(8,0)</td><td class="p-1">40.000 + 0</td><td class="p-1">Rp40.000</td></tr>
+        <tr><td class="p-1">C(0,10)</td><td class="p-1">0 + 40.000</td><td class="p-1">Rp40.000</td></tr>
+        <tr class="bg-butter-100 font-extrabold"><td class="p-1">B(4,8)</td><td class="p-1">20.000 + 32.000</td><td class="p-1">Rp52.000 ★</td></tr></tbody></table></li>
+      <li class="stepcard bg-crust-50 p-3">🎯 <b>Keputusan:</b> produksi <b>4 croissant</b> &amp; <b>8 roti sobek</b> → laba maksimum <b>Rp52.000</b>; tepung &amp; mentega habis tepat.</li>
+    </ul>` }
+};
+
+/* ==========================================================================
+   4. HALAMAN KOMIK (16 halaman · 4 bab)
+   ========================================================================== */
+const PAGES = [
+{ ch: 0, name: 'Sampul', sound: 'pop', html: (dReset(), `
+  <div class="halftone relative flex min-h-[32rem] flex-col items-center justify-center overflow-hidden bg-butter-100 p-6 text-center sm:p-10">
+    ${sfx('WUSH!', 'right-6 top-6 text-crust-400', 'text-4xl')}
+    ${sfx('DING!', 'left-6 bottom-10 text-butter-500', 'text-3xl')}
+    <span class="chipx bg-white pop">Komik Edukasi Interaktif · SMK AKL · Konvensi DHP Bersih</span>
+    <h2 class="font-comic pop mt-4 max-w-2xl text-3xl font-extrabold leading-tight sm:text-5xl" style="--d:.1s">
+      Masalah di Dapur &amp; <span class="text-crust-500">Peta Keuntungan</span> yang Bersih</h2>
+    <p class="pop mt-3 max-w-xl text-sm font-semibold text-wood-600 sm:text-base" style="--d:.2s">
+      Ikuti Rian &amp; Chef Aris mengubah stok tepung dan mentega yang terbatas menjadi keputusan bisnis
+      paling menguntungkan — dengan daerah penyelesaian yang dibiarkan <b>bersih tanpa arsiran</b>.</p>
+    <div class="pop mt-5 flex items-end justify-center gap-6" style="--d:.3s">
+      <div class="w-32 sm:w-40">${charRian('excited', .2)}</div>
+      <div class="w-32 sm:w-40">${charAris('amazed', .6)}</div>
+    </div>
+    <div class="pop mt-5 flex flex-wrap justify-center gap-2" style="--d:.45s">
+      <span class="chipx bg-crust-300">4 bab</span><span class="chipx bg-butter-200">17 halaman</span>
+      <span class="chipx bg-white">karakter beranimasi</span><span class="chipx bg-white">sound FX</span>
+    </div>
+    <button class="btn btn-crust pop mt-6 !px-8 !py-3 text-lg" data-go="1" style="--d:.55s">Mulai Baca ▶</button>
+  </div>`) },
+
+/* ------- BAB 1 ------- */
+{ ch: 1, name: 'Masalah di Dapur', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(1, 'Masalah di Dapur D\'Pastry Bakery')}
+    <div class="grid gap-4 lg:grid-cols-5">
+      ${stage(bgKitchen(), [
+        figure('aris', 'worried', 'bottom-0 left-[4%] w-[30%] sm:w-[24%]', .3),
+        figure('rian', 'happy', 'bottom-0 right-[5%] w-[30%] sm:w-[24%]', .8)
+      ], sfx('KRING!', 'right-3 top-2 text-jam', 'text-3xl') + sfx('SRLL~', 'left-[38%] top-3 text-wood-400', 'text-xl'), 'lg:col-span-3')}
+      <div class="space-y-3 lg:col-span-2">
+        ${narr('Pukul 05.30 WIB. Aroma mentega belum tercium — yang ada justru wajah gelisah Chef Aris di depan lemari bahan.')}
+        ${bubble('aris', 'Rian! Syukurlah kamu datang. Ada yang harus kita bicarakan sebelum adonan pertama dimulai…', 'l')}
+        ${bubble('rian', 'Pagi, Chef! Wah, wajah Chef seperti tabel yang belum balance. Ada apa nih?', 'r')}
+      </div>
+    </div>
+  </div>`) },
+{ ch: 1, name: 'Stok yang Menipis', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(1, 'Masalah di Dapur D\'Pastry Bakery')}
+    <div class="grid gap-4 lg:grid-cols-2">
+      ${stage(bgPantry(), [figure('aris', 'worried', 'bottom-0 right-[6%] w-[34%] sm:w-[28%]', .4)], sfx('HUFFT!', 'left-4 top-3 text-jam', 'text-2xl'))}
+      <div class="space-y-3">
+        ${bubble('aris', 'Supplier terlambat dua hari. Stok tinggal <b>20 kg tepung</b> dan <b>16 kg mentega</b> — cukup untuk sehari produksi saja.')}
+        <div class="grid grid-cols-2 gap-3">
+          <div class="stepcard pop bg-crust-50 p-3 text-center" style="--d:.35s"><div class="text-[.65rem] font-extrabold uppercase text-crust-500">Tepung Terigu</div><div class="font-comic text-3xl font-extrabold">20<span class="text-base"> kg</span></div></div>
+          <div class="stepcard pop bg-butter-50 p-3 text-center" style="--d:.45s"><div class="text-[.65rem] font-extrabold uppercase text-butter-600">Mentega</div><div class="font-comic text-3xl font-extrabold">16<span class="text-base"> kg</span></div></div>
+        </div>
+        ${bubble('rian', 'Berarti hari ini kita harus memilih kombinasi produk paling tepat. Tidak boleh ada bahan terbuang percuma!', 'l')}
+      </div>
+    </div>
+  </div>`) },
+{ ch: 1, name: 'Rencana Produk', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(1, 'Masalah di Dapur D\'Pastry Bakery')}
+    ${stage(bgProducts(), [
+      figure('aris', 'calm', 'bottom-0 left-[3%] w-[26%] sm:w-[20%]', .2),
+      figure('rian', 'think', 'bottom-0 right-[3%] w-[26%] sm:w-[20%]', .7)
+    ], sfx('CATAT!', 'right-4 top-2 text-leaf', 'text-2xl'))}
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="space-y-3">
+        ${bubble('aris', 'Rencana hari ini dua produk: <b>croissant (x)</b> dan <b>roti sobek (y)</b>. Tapi kebutuhan bahannya berbeda…', 'l')}
+        <div class="stepcard pop p-3" style="--d:.3s"><div class="font-comic text-sm font-extrabold text-crust-500">1 CROISSANT (x)</div><p class="mt-1 text-sm font-bold">🌾 1 kg tepung + 🧈 2 kg mentega</p></div>
+        <div class="stepcard pop p-3" style="--d:.42s"><div class="font-comic text-sm font-extrabold text-butter-600">1 ROTI SOBEK (y)</div><p class="mt-1 text-sm font-bold">🌾 2 kg tepung + 🧈 1 kg mentega</p></div>
+      </div>
+      <div class="space-y-3">
+        ${bubble('rian', 'Chef tenang saja. Pola masalah seperti ini justru favoritku — ada batasannya, ada tujuannya. Pasti ada jalan matematis!', 'r')}
+        ${narr('Mata Rian berbinar. Ia sudah mencium bau… bukan roti, melainkan sistem pertidaksamaan linear dua variabel.')}
+      </div>
+    </div>
+  </div>`) },
+{ ch: 1, name: 'Rian Mencium Matematika', sound: 'ding', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(1, 'Masalah di Dapur D\'Pastry Bakery')}
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="space-y-3">
+        ${stage(bgCounter(), [figure('rian', 'excited', 'bottom-0 right-[6%] w-[36%] sm:w-[30%]', .3)], sfx('IDE!', 'left-4 top-2 text-crust-500', 'text-2xl'))}
+        <div class="stepcard pop bg-ink p-4 text-center text-cream" style="--d:.35s">
+          <div class="text-[.65rem] font-extrabold uppercase tracking-widest text-butter-300">Variabel keputusan</div>
+          <div class="math mt-1 text-xl font-bold sm:text-2xl"><span class="text-crust-300">x</span> = banyak croissant · <span class="text-butter-300">y</span> = banyak roti sobek</div>
+        </div>
+      </div>
+      <div class="space-y-3">
+        ${bubble('rian', 'Langkah pertama SPtLDV: tentukan variabelnya. Semua informasi Chef — stok dan resep — sebentar lagi jadi pertidaksamaan linear!')}
+        ${bubble('aris', 'Pertidaksamaan linear dua variabel? Terdengar seperti bahasa alien, Rian…', 'r')}
+        ${bubble('rian', 'Percaya padaku, Chef. Setiap masalah usaha pasti ada perhitungan matematikanya!', 'l')}
+        ${noteBtn(1)}
+      </div>
+    </div>
+  </div>`) },
+
+/* ------- BAB 2 ------- */
+{ ch: 2, name: 'Spidol Ajaib Rian', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(2, 'Dari Lemari Bahan ke Model Matematika')}
+    <div class="grid gap-4 lg:grid-cols-5">
+      <div class="space-y-3 lg:col-span-2">
+        ${narr('Rian menarik papan tulis mini dari gudang, lalu menjentikkan spidol favoritnya seperti pesulap.')}
+        ${bubble('rian', 'Kita susun <b>tabel alokasi bahan baku</b>: baris untuk bahan, kolom untuk produk, plus kolom batasan stok!')}
+        ${bubble('aris', 'Seperti kartu stok gudangku, tapi… jauh lebih rapi?', 'r')}
+      </div>
+      ${stage(bgKitchen(), [figure('rian', 'excited', 'bottom-0 left-[8%] w-[34%] sm:w-[26%]', .4)], sfx('CET! CET!', 'right-4 top-2 text-crust-500', 'text-3xl'), 'lg:col-span-3')}
+    </div>
+  </div>`) },
+{ ch: 2, name: 'Tabel Alokasi Bahan', sound: 'pop', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(2, 'Dari Lemari Bahan ke Model Matematika')}
+    <div class="grid gap-4 lg:grid-cols-5">
+      ${panel(`<div class="relative">${bgBoardTable()}${figure('rian', 'confident', 'bottom-0 right-[2%] w-[30%] sm:w-[22%]', .5)}</div>`, 'lg:col-span-3')}
+      <div class="space-y-3 lg:col-span-2">
+        <div class="stepcard pop bg-crust-50 p-3" style="--d:1.45s"><b class="font-comic text-crust-500">Kolom x:</b> <span class="text-sm font-semibold">bahan untuk SATU croissant.</span></div>
+        <div class="stepcard pop bg-butter-50 p-3" style="--d:1.57s"><b class="font-comic text-butter-600">Kolom y:</b> <span class="text-sm font-semibold">bahan untuk SATU roti sobek.</span></div>
+        <div class="stepcard pop bg-white p-3" style="--d:1.69s"><b class="font-comic text-wood-600">Kolom Stok:</b> <span class="text-sm font-semibold">batas maksimal bahan hari ini.</span></div>
+        ${bubble('rian', 'Setiap baris tinggal dibaca jadi satu kalimat: “pemakaian bahan tidak boleh melebihi stok”.')}
+      </div>
+    </div>
+  </div>`) },
+{ ch: 2, name: 'Dari Tabel ke Pertidaksamaan', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(2, 'Dari Lemari Bahan ke Model Matematika')}
+    <div class="grid gap-4 lg:grid-cols-3">
+      <div class="stepcard pop p-4" style="--d:.1s"><div class="chipx w-fit bg-crust-100">BARIS TEPUNG</div>
+        <p class="mt-2 text-sm font-bold mono">1·x + 2·y … 20</p><div class="my-2 text-center text-xl">⬇</div>
+        <div class="rounded-xl bg-crust-400 p-2 text-center font-comic text-lg font-extrabold text-white shadow-comicXs">x + 2y ≤ 20</div></div>
+      <div class="stepcard pop p-4" style="--d:.25s"><div class="chipx w-fit bg-butter-100">BARIS MENTEGA</div>
+        <p class="mt-2 text-sm font-bold mono">2·x + 1·y … 16</p><div class="my-2 text-center text-xl">⬇</div>
+        <div class="rounded-xl bg-butter-400 p-2 text-center font-comic text-lg font-extrabold text-ink shadow-comicXs">2x + y ≤ 16</div></div>
+      <div class="stepcard pop p-4" style="--d:.4s"><div class="chipx w-fit bg-white">LOGIKA PRODUKSI</div>
+        <p class="mt-2 text-sm font-bold">Roti tidak mungkin berjumlah negatif!</p><div class="my-2 text-center text-xl">⬇</div>
+        <div class="rounded-xl bg-ink p-2 text-center font-comic text-lg font-extrabold text-butter-200 shadow-comicXs">x ≥ 0 , y ≥ 0</div></div>
+    </div>
+    <div class="grid gap-4 md:grid-cols-3">
+      <div class="md:col-span-2 space-y-3">
+        ${bubble('rian', 'Tanda <b>≤</b> muncul karena pemakaian boleh sama dengan stok, tetapi tidak boleh lebih. Itulah arti kata “terbatas”.')}
+        ${bubble('aris', 'Lemari bahanku baru saja berubah menjadi tiga kalimat matematika. Aku merinding, Rian!', 'r')}
+      </div>
+      ${stage(bgKitchen(), [figure('rian', 'think', 'bottom-0 left-[10%] w-[44%]', .4)], '', '')}
+    </div>
+  </div>`) },
+{ ch: 2, name: 'Fungsi Tujuan', sound: 'ding', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(2, 'Dari Lemari Bahan ke Model Matematika')}
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="space-y-3">
+        ${bubble('rian', 'Terakhir, peta keuntungannya! Laba croissant <b>Rp5.000</b>, roti sobek <b>Rp4.000</b>. Total laba kita sebut <b>Z</b>.')}
+        <div class="stepcard pop bg-ink p-4 text-center" style="--d:.3s">
+          <div class="text-[.65rem] font-extrabold uppercase tracking-widest text-butter-300">Fungsi tujuan — maksimumkan</div>
+          <div class="math mt-1 text-2xl font-bold text-white sm:text-3xl">Z = 5.000x + 4.000y</div></div>
+        ${bubble('aris', 'Jadi kalau aku tahu x dan y terbaik, aku tahu uang terbaik. Sederhana… sekaligus menakjubkan!', 'r')}
+      </div>
+      <div class="space-y-3">
+        ${stage(bgCounter(), [figure('aris', 'amazed', 'bottom-0 right-[8%] w-[38%] sm:w-[32%]', .5)], sfx('WOW!', 'left-4 top-2 text-jam', 'text-2xl'))}
+        ${noteBtn(2)}
+      </div>
+    </div>
+  </div>`) },
+
+/* ------- BAB 3 ------- */
+{ ch: 3, name: 'Peta di Papan Tulis', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(3, 'Menggambar Grafik & Menentukan DHP Bersih')}
+    <div class="grid gap-4 lg:grid-cols-5">
+      ${panel(`<div class="relative">${graphClean(20, 16, 1)}${figure('rian', 'confident', 'bottom-0 right-[1%] w-[26%] sm:w-[19%]', .6)}</div>`, 'lg:col-span-3')}
+      <div class="space-y-3 lg:col-span-2">
+        ${bubble('rian', 'Tiap pertidaksamaan punya garis batas. Gambar lewat titik potong sumbunya!')}
+        <div class="stepcard pop p-3" style="--d:.3s"><b class="font-comic text-crust-500">Garis x + 2y = 20</b><p class="mt-1 text-sm font-bold mono">y = 0 → (20, 0) · x = 0 → (0, 10)</p></div>
+        <div class="stepcard pop p-3" style="--d:.42s"><b class="font-comic text-butter-600">Garis 2x + y = 16</b><p class="mt-1 text-sm font-bold mono">y = 0 → (8, 0) · x = 0 → (0, 16)</p></div>
+        ${bubble('aris', 'Garis-garis itu seperti jalan di peta kotaku… lalu ke mana kita harus pergi?', 'r')}
+      </div>
+    </div>
+  </div>`) },
+{ ch: 3, name: 'Konvensi DHP Bersih', sound: 'pop', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(3, 'Menggambar Grafik & Menentukan DHP Bersih')}
+    <div class="grid gap-4 lg:grid-cols-5">
+      <div class="space-y-3 lg:col-span-2">
+        ${bubble('rian', 'Nah, ini andalanku: <b>Konvensi DHP Bersih</b>. Daerah yang TIDAK memenuhi kendala kita arsir lembut…')}
+        ${bubble('rian', '…sehingga wilayah yang tersisa <b>BERSIH tanpa arsiran</b> — itulah DHP! Tengahnya kosong dan jelas, jadi titik pojok mudah dibaca.')}
+        <div class="stepcard pop bg-leaf/10 p-3 text-sm font-bold text-leaf" style="--d:.4s;border-color:#2F855A">🟩 DHP = poligon bersih berpojok O, A, B, C</div>
+        ${bubble('aris', 'Wah, karena DHP-nya bersih di tengah, titik perpotongan B(4,8) jadi sangat jelas terlihat!', 'r')}
+      </div>
+      ${panel(`<div class="relative">${graphClean(20, 16, 2)}${figure('aris', 'amazed', 'bottom-0 right-[1%] w-[26%] sm:w-[19%]', .7)}</div>`, 'lg:col-span-3')}
+    </div>
+  </div>`) },
+{ ch: 3, name: 'Berburu Titik B', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(3, 'Menggambar Grafik & Menentukan DHP Bersih')}
+    ${panel(`<div class="relative p-4 sm:p-6">${sfx('CORET!', 'right-6 top-4 text-crust-500', 'text-2xl')}
+      <div class="font-comic text-lg font-extrabold">Perpotongan dua garis = Titik B</div>
+      <div class="mt-3 grid gap-3 md:grid-cols-2">
+        <div class="stepcard p-3 mono text-sm font-bold"><div class="text-[.65rem] font-extrabold uppercase text-wood-400">Eliminasi x</div>
+          <p class="mt-1">x + 2y = 20 |×2| → 2x + 4y = 40</p><p>2x + y = 16 |×1| → 2x + y = 16</p>
+          <div class="my-1 border-t-4 border-dotted border-ink"></div><p class="text-crust-500">3y = 24 → y = 8</p></div>
+        <div class="stepcard p-3 mono text-sm font-bold"><div class="text-[.65rem] font-extrabold uppercase text-wood-400">Substitusi y = 8</div>
+          <p class="mt-1">x + 2(8) = 20</p><p>x + 16 = 20</p><p class="text-crust-500">x = 4</p>
+          <div class="mt-2 rounded-xl bg-crust-400 p-2 text-center font-comic text-lg font-extrabold text-white shadow-comicXs">B (4, 8)</div></div>
+      </div>
+      <div class="pointer-events-none absolute bottom-0 left-[2%] w-[22%]">${charRian('think', .5)}</div></div>`)}
+    <div class="grid gap-3 md:grid-cols-2">
+      ${bubble('rian', 'Eliminasi melenyapkan satu variabel, substitusi memasukkan hasilnya ke persamaan lain. Dua jurus wajib aljabar!')}
+      ${bubble('aris', 'Empat croissant dan delapan roti sobek… angka itu terasa familiar, seperti resep nenekku!', 'r')}
+    </div>
+  </div>`) },
+{ ch: 3, name: 'Peta Lengkap', sound: 'ding', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(3, 'Menggambar Grafik & Menentukan DHP Bersih')}
+    <div class="grid gap-4 lg:grid-cols-5">
+      ${panel(`<div class="relative">${graphClean(20, 16, 3)}${figure('aris', 'amazed', 'bottom-0 left-[1%] w-[24%] sm:w-[18%]', .6)}</div>`, 'lg:col-span-3')}
+      <div class="space-y-3 lg:col-span-2">
+        ${bubble('aris', 'Empat pojok daerah bersih itu: O, A, B, C — seperti empat sudut meja etalaseku!')}
+        ${bubble('rian', 'Tepat! Dan menurut <b>teorema titik pojok</b>, laba terbesar pasti bersembunyi di salah satu pojok itu.')}
+        ${narr('Papan tulis kini menampilkan peta lengkap: garis kendala tegas, arsiran daerah tak layak di luar, dan poligon DHP yang bersih di tengah.')}
+        ${noteBtn(3)}
+      </div>
+    </div>
+  </div>`) },
+
+/* ------- BAB 4 ------- */
+{ ch: 4, name: 'Uji Titik Pojok', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(4, 'Uji Titik Pojok & Keputusan Bisnis Maksimal')}
+    ${panel(`<div class="relative p-4 sm:p-6">${sfx('HITUNG!', 'right-6 top-4 text-leaf', 'text-2xl')}
+      <div class="font-comic text-lg font-extrabold">Tabel uji titik pojok · <span class="math">Z = 5.000x + 4.000y</span></div>
+      <div class="mt-3 overflow-x-auto"><table class="w-full min-w-[26rem] text-sm mono">
+        <thead><tr class="border-b-4 border-ink text-left"><th class="p-2 font-comic">Titik</th><th class="p-2 font-comic">Substitusi</th><th class="p-2 text-right font-comic">Laba Z</th></tr></thead>
+        <tbody class="font-bold">
+          <tr class="pop border-b border-wood-200" style="--d:.15s"><td class="p-2">O(0,0)</td><td class="p-2">5.000(0) + 4.000(0)</td><td class="p-2 text-right">Rp0</td></tr>
+          <tr class="pop border-b border-wood-200" style="--d:.3s"><td class="p-2">A(8,0)</td><td class="p-2">5.000(8) + 4.000(0)</td><td class="p-2 text-right">Rp40.000</td></tr>
+          <tr class="pop border-b border-wood-200" style="--d:.45s"><td class="p-2">C(0,10)</td><td class="p-2">5.000(0) + 4.000(10)</td><td class="p-2 text-right">Rp40.000</td></tr>
+          <tr class="pop bg-butter-100" style="--d:.6s"><td class="p-2 font-extrabold">B(4,8)</td><td class="p-2">5.000(4) + 4.000(8) = 20.000 + 32.000</td><td class="p-2 text-right font-extrabold text-crust-500">Rp52.000 ★</td></tr>
+        </tbody></table></div>
+      <div class="pointer-events-none absolute bottom-0 right-[2%] w-[20%]">${charRian('happy', .8)}</div></div>`)}
+    <div class="grid gap-3 md:grid-cols-2">
+      ${bubble('rian', 'Substitusi satu per satu. Tanpa tebakan, tanpa roti yang dikorbankan sia-sia.')}
+      ${bubble('aris', 'Baris terakhir lebih besar dari yang lain! Mata tuaku masih awas untuk angka sebagus itu.', 'r')}
+    </div>
+  </div>`) },
+{ ch: 4, name: 'Laba Maksimum!', sound: 'tada', html: (dReset(), `
+  <div class="relative space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(4, 'Uji Titik Pojok & Keputusan Bisnis Maksimal')}
+    <div class="halftone comic-border-sm relative overflow-hidden rounded-2xl bg-butter-50 p-6 text-center sm:p-10">
+      ${sfx('HOREEE!', 'left-4 top-4 text-crust-400', 'text-3xl')}
+      ${sfx('DING!', 'right-6 top-8 text-butter-500', 'text-2xl')}
+      <div class="pop flex items-end justify-center gap-8" style="--d:.15s">
+        <div class="w-28 sm:w-36">${charRian('excited', .3)}</div>
+        <div class="w-28 sm:w-36">${charAris('happy', .7)}</div>
+      </div>
+      <div class="pop mt-3 text-[.7rem] font-extrabold uppercase tracking-[.25em] text-wood-500" style="--d:.3s">Keputusan bisnis optimum</div>
+      <div class="font-comic mt-1 text-3xl font-extrabold sm:text-5xl">Titik B (4, 8)</div>
+      <p class="pop mt-1 text-sm font-bold text-wood-600 sm:text-base" style="--d:.4s">produksi <b>4 croissant</b> dan <b>8 roti sobek</b></p>
+      <div class="stamp mx-auto mt-4 w-fit rounded-2xl border-4 border-double border-jam bg-white/80 px-6 py-3" style="--d:.6s">
+        <div class="font-comic text-xl font-extrabold text-jam sm:text-2xl">LABA MAKSIMUM Rp52.000</div></div>
+      <p class="pop mx-auto mt-4 max-w-xl text-xs font-semibold text-wood-500" style="--d:.85s">Tepung 4 + 16 = 20 kg habis tepat · Mentega 8 + 8 = 16 kg habis tepat — nol bahan terbuang!</p>
+    </div>
+  </div>`) },
+{ ch: 4, name: 'Aroma Kemenangan', sound: 'page', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(4, 'Uji Titik Pojok & Keputusan Bisnis Maksimal')}
+    <div class="grid gap-4 lg:grid-cols-5">
+      ${stage(bgOven(), [figure('aris', 'happy', 'bottom-0 right-[4%] w-[30%] sm:w-[24%]', .5)], sfx('WANGI~', 'left-4 top-2 text-wood-500', 'text-2xl'), 'lg:col-span-3')}
+      <div class="space-y-3 lg:col-span-2">
+        ${narr('Satu jam kemudian aroma roti hangat memenuhi dapur: 4 croissant keemasan dan 8 roti sobek empuk terisi tepat sesuai perhitungan.')}
+        ${bubble('aris', 'Rian, mulai besok kamu resmi “konsultan matematika” D\'Pastry Bakery!')}
+        ${bubble('rian', 'Kalau begitu laba maksimumnya kita naikkan lagi minggu depan, Chef!', 'l')}
+      </div>
+    </div>
+  </div>`) },
+{ ch: 4, name: 'Pesan Rian', sound: 'ding', html: (dReset(), `
+  <div class="space-y-4 p-4 sm:p-6 lg:p-7">
+    ${chapChip(4, 'Epilog · Sekarang giliranmu!')}
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="space-y-3">
+        <div class="stepcard bg-ink p-4 text-cream">
+          <div class="text-[.65rem] font-extrabold uppercase tracking-widest text-butter-300">Model matematika lengkap</div>
+          <div class="math mt-1 text-lg font-bold text-white">Maksimumkan Z = 5.000x + 4.000y</div>
+          <ul class="mt-2 space-y-1 text-sm font-bold text-butter-100">
+            <li>• <span class="math">x + 2y ≤ 20</span> (tepung) · <span class="math">2x + y ≤ 16</span> (mentega) · <span class="math">x ≥ 0, y ≥ 0</span></li>
+          </ul>
+          <p class="mt-2 text-xs font-semibold text-butter-200">🟩 Konvensi DHP bersih: arsir daerah tak layak, biarkan daerah layak bersih tanpa arsiran.</p>
+        </div>
+        ${bubble('rian', 'Sekarang giliranmu! Geser stok bahan di <b>Eksplorator DHP Bersih</b> bawah ini dan buktikan sendiri titik optimumnya.')}
+        ${noteBtn(4, '📝 Buka lagi Catatan Rumus Rian')}
+      </div>
+      <div class="space-y-3">
+        <div class="flex items-end justify-center gap-6"><div class="w-28">${charRian('happy', .2)}</div><div class="w-28">${charAris('calm', .6)}</div></div>
+        <div class="grid gap-2">
+          <button class="btn btn-crust w-full !py-3" data-go-exp>📈 Coba Eksplorator DHP Bersih</button>
+          <a href="simulator-laba.html" class="btn w-full !py-3">🧮 Simulator Laba lengkap</a>
+          <button class="btn w-full" data-restart>↺ Baca ulang dari sampul</button>
+        </div>
+      </div>
+    </div>
+  </div>`) }
+];
+
+/* ==========================================================================
+   5. SOLVER LP + GRAFIK KONVENSI DHP BERSIH + EKSPLORATOR
+   ========================================================================== */
+function solveLP(F, B, px, py) {
+  const a1 = 1, b1 = 2, a2 = 2, b2 = 1, EPS = 1e-7;
+  const cands = [
+    { x: 0, y: 0 }, { x: F / a1, y: 0 }, { x: B / a2, y: 0 },
+    { x: 0, y: F / b1 }, { x: 0, y: B / b2 }
+  ];
+  const det = a1 * b2 - a2 * b1;
+  if (Math.abs(det) > EPS) cands.push({ x: (F * b2 - B * b1) / det, y: (B * a1 - F * a2) / det });
+  const seen = [], pts = [];
+  for (const c of cands) {
+    if (!isFinite(c.x) || !isFinite(c.y) || c.x < -EPS || c.y < -EPS) continue;
+    if (a1 * c.x + b1 * c.y > F + EPS || a2 * c.x + b2 * c.y > B + EPS) continue;
+    const x = Math.max(0, c.x), y = Math.max(0, c.y);
+    if (seen.some(p => Math.abs(p.x - x) < 1e-6 && Math.abs(p.y - y) < 1e-6)) continue;
+    seen.push({ x, y });
+    pts.push({ x, y, z: px * x + py * y, fl: F - (a1 * x + b1 * y), bl: B - (a2 * x + b2 * y) });
+  }
+  pts.sort((p, q) => {
+    if (p.x === 0 && p.y === 0) return -1;
+    if (q.x === 0 && q.y === 0) return 1;
+    return Math.atan2(p.y, p.x) - Math.atan2(q.y, q.x);
+  });
+  ['O', 'A', 'B', 'C', 'D', 'E'].forEach((l, i) => { if (pts[i]) pts[i].label = l; });
+  let best = null;
+  pts.forEach(p => { if (!best || p.z > best.z + 1e-9) best = p; });
+  return { F, B, px, py, points: pts, best };
+}
+/* potong poligon dengan setengah-bidang a·x+b·y >= c (Sutherland–Hodgman) */
+function clipHalf(poly, a, b, c) {
+  const out = [], f = p => a * p[0] + b * p[1] - c;
+  for (let i = 0; i < poly.length; i++) {
+    const cur = poly[i], nxt = poly[(i + 1) % poly.length], fc = f(cur), fn = f(nxt);
+    if (fc >= -1e-9) out.push(cur);
+    if ((fc > 1e-9 && fn < -1e-9) || (fc < -1e-9 && fn > 1e-9)) {
+      const t = fc / (fc - fn);
+      out.push([cur[0] + (nxt[0] - cur[0]) * t, cur[1] + (nxt[1] - cur[1]) * t]);
+    }
+  }
+  return out;
+}
+/* grafik konvensi DHP bersih: stage 1 = garis, 2 = +arsir luar & DHP bersih, 3 = +titik pojok */
+function graphClean(F, B, stage, opt = {}) {
+  const s = solveLP(F, B, 5000, 4000);
+  const D = Math.max(12, Math.ceil((Math.max(F, B) + 4) / 4) * 4);
+  const W = 400, H = 300, L = 40, R = 14, T = 16, Bo = 34;
+  const X = v => L + v * (W - L - R) / D, Y = v => H - Bo - v * (H - T - Bo) / D;
+  const shade = opt.shade !== false, showPts = opt.pts !== false, Z = opt.Z || 0;
+  let defs = '', g = `<rect width="${W}" height="${H}" fill="#FFFEFB"/>`;
+  const hatch = (poly, color, soft, dir, delay) => {
+    if (poly.length < 3) return '';
+    const idc = uid();
+    const ptsAttr = poly.map(q => X(q[0]).toFixed(1) + ',' + Y(q[1]).toFixed(1)).join(' ');
+    defs += `<clipPath id="${idc}"><polygon points="${ptsAttr}"/></clipPath>`;
+    let lines = '';
+    for (let d = -H; d < W + H; d += 11) {
+      lines += dir > 0
+        ? `<line x1="${d}" y1="0" x2="${d + H}" y2="${H}"/>`
+        : `<line x1="${d}" y1="0" x2="${d - H}" y2="${H}"/>`;
+    }
+    return `<g class="fadein" style="--d:${delay}s">
+      <polygon points="${ptsAttr}" fill="${soft}"/>
+      <g clip-path="url(#${idc})" stroke="${color}" stroke-width="2" opacity=".42">${lines}</g></g>`;
+  };
+
+  /* grid halus */
+  for (let i = 2; i <= D; i += 2) {
+    g += `<line x1="${X(i)}" y1="${Y(0)}" x2="${X(i)}" y2="${Y(D)}" stroke="#F4E7D3" stroke-width="1"/>`;
+    g += `<line x1="${X(0)}" y1="${Y(i)}" x2="${X(D)}" y2="${Y(i)}" stroke="#F4E7D3" stroke-width="1"/>`;
+  }
+
+  /* ARSIR DAERAH TAK LAYAK (konvensi DHP bersih) */
+  if (shade && stage >= 2) {
+    const box = [[0, 0], [D, 0], [D, D], [0, D]];
+    g += hatch(clipHalf(box, 1, 2, F), '#DE6F0C', 'rgba(222,111,12,.08)', 1, .85);
+    g += hatch(clipHalf(box, 2, 1, B), '#C88A08', 'rgba(200,138,8,.08)', -1, 1.05);
+  }
+
+  /* DHP: poligon BERSIH (ditimpa putih lalu diberi outline hijau) */
+  if (stage >= 2 && s.points.length > 2) {
+    const poly = s.points.map(p => `${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join(' ');
+    g += `<polygon class="fadein" style="--d:1.25s" points="${poly}" fill="#FFFEFB"/>`;
+    g += `<polygon class="fadein" style="--d:1.35s" points="${poly}" fill="none" stroke="#2F855A" stroke-width="3.4" stroke-linejoin="round"/>`;
+    const cx = s.points.reduce((a, p) => a + p.x, 0) / s.points.length, cy = s.points.reduce((a, p) => a + p.y, 0) / s.points.length;
+    g += `<text class="fadein" style="--d:1.5s" x="${X(cx)}" y="${Y(cy) - 2}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="15" font-weight="800" fill="#2F855A">DHP</text>`;
+    g += `<text class="fadein" style="--d:1.6s" x="${X(cx)}" y="${Y(cy) + 12}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="9.5" font-weight="700" fill="#2F855A">BERSIH · tanpa arsiran</text>`;
+  }
+
+  g = `<defs>${defs}</defs>` + g;
+
+  /* sumbu */
+  g += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(D) + 4}" y2="${Y(0)}" stroke="${INK}" stroke-width="3"/>`;
+  g += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(0)}" y2="${Y(D) - 4}" stroke="${INK}" stroke-width="3"/>`;
+  g += `<path d="M${X(D) + 4} ${Y(0)} l-8 -4.5 v9 z" fill="${INK}"/><path d="M${X(0)} ${Y(D) - 4} l-4.5 8 h9 z" fill="${INK}"/>`;
+  g += `<text x="${X(D)}" y="${Y(0) + 26}" text-anchor="end" font-family="Cambria Math,Georgia,serif" font-style="italic" font-size="13" font-weight="700" fill="${INK}">x (croissant)</text>`;
+  g += `<text x="${X(0) + 8}" y="${Y(D) + 4}" font-family="Cambria Math,Georgia,serif" font-style="italic" font-size="13" font-weight="700" fill="${INK}">y (roti)</text>`;
+  for (let i = 4; i < D; i += 4) {
+    g += `<text x="${X(i)}" y="${Y(0) + 15}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="10.5" font-weight="700" fill="#8A5A34">${i}</text>`;
+    g += `<text x="${X(0) - 6}" y="${Y(i) + 4}" text-anchor="end" font-family="Baloo 2,sans-serif" font-size="10.5" font-weight="700" fill="#8A5A34">${i}</text>`;
+  }
+
+  /* garis kendala + titik potong sumbu */
+  const line = (a, b, c, col, lab, dly, labT) => {
+    const p0 = [0, c / b], p1 = [c / a, 0];
+    let out = `<line class="drawline" style="--d:${dly}s" x1="${X(p0[0])}" y1="${Y(p0[1])}" x2="${X(p1[0])}" y2="${Y(p1[1])}" stroke="${col}" stroke-width="4" stroke-linecap="round"/>`;
+    out += `<g class="pop" style="--d:${dly + .35}s"><circle cx="${X(p1[0])}" cy="${Y(p1[1])}" r="4" fill="${col}"/><circle cx="${X(p0[0])}" cy="${Y(p0[1])}" r="4" fill="${col}"/>
+      <text x="${X(p1[0])}" y="${Y(p1[1]) - 8}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="10.5" font-weight="800" fill="${col}" stroke="#FFFEFB" stroke-width="3.5" paint-order="stroke">(${num0(p1[0])},0)</text>
+      <text x="${X(p0[0]) + 7}" y="${Y(p0[1]) + 4}" font-family="Baloo 2,sans-serif" font-size="10.5" font-weight="800" fill="${col}" stroke="#FFFEFB" stroke-width="3.5" paint-order="stroke">(0,${num0(p0[1])})</text>
+      <g transform="translate(${X(p0[0] + (p1[0] - p0[0]) * labT)},${Y(p0[1] + (p1[1] - p0[1]) * labT)})"><rect x="8" y="-14" width="104" height="20" rx="7" fill="#fff" stroke="${col}" stroke-width="1.6"/>
+      <text x="60" y="0" text-anchor="middle" font-family="Cambria Math,Georgia,serif" font-style="italic" font-size="11.5" font-weight="800" fill="${col}">${lab}</text></g></g>`;
+    return out;
+  };
+  g += line(1, 2, F, '#DE6F0C', `x + 2y = ${F}`, .2, .62);
+  g += line(2, 1, B, '#C88A08', `2x + y = ${B}`, .55, .12);
+
+  /* garis uji laba */
+  if (Z > 0) {
+    const xi = Z / 5000, yi = Z / 4000;
+    if (xi > .01 || yi > .01) {
+      const p1 = [Math.min(xi, D), 0], p2 = [0, Math.min(yi, D)];
+      g += `<line x1="${X(p1[0])}" y1="${Y(p1[1])}" x2="${X(p2[0])}" y2="${Y(p2[1])}" stroke="#7C3AED" stroke-width="2.6" stroke-dasharray="9 6"/>`;
+      g += `<g transform="translate(${X(p1[0]) * .78 + X(0) * .22},${Y(0) * .78 + Y(p2[1]) * .22 - 10})"><rect x="-58" y="-16" width="116" height="19" rx="8" fill="#7C3AED"/>
+        <text x="0" y="-2" text-anchor="middle" font-family="Baloo 2,sans-serif" font-size="11" font-weight="800" fill="#fff">garis uji Z = ${Z.toLocaleString('id-ID')}</text></g>`;
+    }
+  }
+
+  /* titik pojok */
+  if (showPts && stage >= 3) {
+    s.points.forEach((p, i) => {
+      const best = p === s.best;
+      const off = p.label === 'O' ? [12, -8, 'start'] : p.label === 'A' ? [10, 18, 'start'] : p.label === 'C' ? [10, -8, 'start'] : [13, -10, 'start'];
+      if (best) g += `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="11" fill="none" stroke="#F58A21" stroke-width="3" class="steam"/>`;
+      g += `<g class="pt pop" style="--d:${1.7 + i * .12}s" data-i="${i}" role="button" tabindex="0" aria-label="Titik ${p.label}">
+        <circle cx="${X(p.x)}" cy="${Y(p.y)}" r="16" fill="transparent"/>
+        <circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${best ? 7.5 : 6}" fill="${best ? '#F58A21' : '#fff'}" stroke="${best ? '#B4560A' : INK}" stroke-width="3"/>
+        <text x="${X(p.x) + off[0]}" y="${Y(p.y) + off[1]}" font-family="Baloo 2,sans-serif" font-size="12.5" font-weight="800" fill="${best ? '#B4560A' : INK}" text-anchor="${off[2]}" stroke="#FFFEFB" stroke-width="4" paint-order="stroke">${p.label}(${num0(p.x)}, ${num0(p.y)})</text>
+        ${best ? `<text x="${X(p.x) + off[0]}" y="${Y(p.y) + off[1] + 14}" font-family="Baloo 2,sans-serif" font-size="10" font-weight="800" fill="#B4560A" text-anchor="${off[2]}" stroke="#FFFEFB" stroke-width="3.5" paint-order="stroke">★ maks ${rp(p.z)}</text>` : ''}</g>`;
+    });
+  }
+
+  /* legenda konvensi */
+  if (stage >= 2 && shade) {
+    g += `<g class="fadein" style="--d:1.8s" transform="translate(${W - 152},${T + 4})">
+      <rect x="0" y="0" width="146" height="46" rx="9" fill="#fff" stroke="${INK}" stroke-width="2.4"/>
+      <g stroke="#DE6F0C" stroke-width="1.6" opacity=".7"><line x1="9" y1="16" x2="16" y2="8"/><line x1="14" y1="17" x2="22" y2="9"/><line x1="19" y1="17" x2="24" y2="12"/></g>
+      <rect x="8" y="7" width="16" height="10" fill="none" stroke="#DE6F0C" stroke-width="1.4"/>
+      <text x="30" y="15.5" font-family="Baloo 2,sans-serif" font-size="9.5" font-weight="700" fill="${INK}">tak memenuhi tepung</text>
+      <g stroke="#C88A08" stroke-width="1.6" opacity=".7"><line x1="9" y1="22" x2="16" y2="30"/><line x1="14" y1="21" x2="22" y2="29"/><line x1="19" y1="21" x2="24" y2="26"/></g>
+      <rect x="8" y="21" width="16" height="10" fill="none" stroke="#C88A08" stroke-width="1.4"/>
+      <text x="30" y="29.5" font-family="Baloo 2,sans-serif" font-size="9.5" font-weight="700" fill="${INK}">tak memenuhi mentega</text>
+      <rect x="8" y="35" width="16" height="8" fill="#FFFEFB" stroke="#2F855A" stroke-width="2"/>
+      <text x="30" y="42.5" font-family="Baloo 2,sans-serif" font-size="9.5" font-weight="800" fill="#2F855A">DHP = bersih!</text></g>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" class="block h-auto w-full select-none" role="img" aria-label="Grafik konvensi DHP bersih">${g}</svg>`;
+}
+
+/* ---------- eksplorator interaktif ---------- */
+const exp = { F: 20, B: 16, Z: 0, shade: true, pts: true, sel: -1 };
+function renderExp() {
+  const s = solveLP(exp.F, exp.B, 5000, 4000);
+  $('#expGraph').innerHTML = graphClean(exp.F, exp.B, 3, { shade: exp.shade, pts: exp.pts, Z: exp.Z });
+  $('#vF').textContent = exp.F; $('#vB').textContent = exp.B;
+  $('#eqF').textContent = `x + 2y ≤ ${exp.F}`; $('#eqB').textContent = `2x + y ≤ ${exp.B}`;
+  $('#vZ').textContent = rp(exp.Z);
+  $('#slZ').max = Math.max(20000, Math.ceil(s.best.z / 1000) * 1000 + 4000);
+
+  $$('#expGraph .pt').forEach(el => {
+    const i = +el.dataset.i;
+    const go = () => { exp.sel = i; renderExpInfo(s); };
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+  renderExpInfo(s);
+}
+function renderExpInfo(s) {
+  const rows = s.points.map((p, i) => `
+    <button data-i="${i}" class="expRow w-full rounded-xl border-2 px-2.5 py-1.5 text-left transition ${exp.sel === i ? 'border-crust-400 bg-crust-50' : 'border-wood-100 bg-white hover:border-butter-300'} ${p === s.best ? 'rowbest' : ''}">
+      <span class="flex items-center justify-between gap-2 text-sm font-bold">
+        <span>${p.label}(${num0(p.x)}, ${num0(p.y)}) ${p === s.best ? '★' : ''}</span>
+        <span class="mono ${p === s.best ? 'text-crust-600' : 'text-wood-600'}">${rp(p.z)}</span></span>
+      <span class="block text-[.65rem] font-semibold text-wood-400">tepung sisa ${num0(p.fl)} kg · mentega sisa ${num0(p.bl)} kg</span>
+    </button>`).join('');
+  const sel = exp.sel >= 0 ? s.points[exp.sel] : null;
+  $('#expInfo').innerHTML = `
+    <h3 class="font-comic text-lg font-extrabold">Titik pojok DHP bersih</h3>
+    <p class="mt-1 text-xs font-semibold text-wood-500">Klik titik pada grafik atau kartu di bawah (laba tetap Rp5.000 &amp; Rp4.000).</p>
+    <div class="mt-2 space-y-2">${rows}</div>
+    ${sel ? `<div class="mt-3 rounded-xl bg-ink p-2.5 text-center text-cream"><span class="math text-sm font-bold">Z = 5.000(${num0(sel.x)}) + 4.000(${num0(sel.y)}) = ${rp(sel.z)}</span></div>` : ''}`;
+  $$('#expInfo .expRow').forEach(b => b.addEventListener('click', () => { exp.sel = +b.dataset.i; renderExpInfo(s); }));
+  $('#expVerdict').innerHTML = `
+    <div class="rounded-xl bg-leaf/15 p-3 text-sm font-bold text-leaf" style="border:2px solid #2F855A">
+      ✅ Laba maksimum <span class="mono">${rp(s.best.z)}</span> di titik <b>${s.best.label}(${num0(s.best.x)}, ${num0(s.best.y)})</b>
+      → produksi <b>${num0(s.best.x)} croissant</b> &amp; <b>${num0(s.best.y)} roti sobek</b>. Wilayah bersih di tengah grafik membuatnya langsung terlihat!</div>`;
+}
+function bindRange(sel, key, after) {
+  $(sel).addEventListener('input', e => { exp[key] = +e.target.value; after && after(); renderExp(); });
+}
+bindRange('#slF', 'F', () => { exp.sel = -1; exp.Z = 0; $('#slZ').value = 0; });
+bindRange('#slB', 'B', () => { exp.sel = -1; exp.Z = 0; $('#slZ').value = 0; });
+bindRange('#slZ', 'Z');
+$('#btnZmax').addEventListener('click', () => {
+  const s = solveLP(exp.F, exp.B, 5000, 4000);
+  exp.Z = s.best.z; $('#slZ').value = exp.Z; renderExp(); play('tada');
+});
+$('#btnReset').addEventListener('click', () => {
+  Object.assign(exp, { F: 20, B: 16, Z: 0, sel: -1 });
+  $('#slF').value = 20; $('#slB').value = 16; $('#slZ').value = 0; renderExp(); play('click');
+});
+$('#tgShade').addEventListener('change', e => { exp.shade = e.target.checked; renderExp(); });
+$('#tgPts').addEventListener('change', e => { exp.pts = e.target.checked; renderExp(); });
+
+/* ==========================================================================
+   6. MESIN READER: navigasi, sound FX synth, efek, modal, swipe, flip, init
+   ========================================================================== */
+let pi = 0;
+const sfxOn = { v: true }, fxOn = { v: true };
+let AC = null;
+function ac() {
+  if (!AC) { const C = window.AudioContext || window.webkitAudioContext; if (C) AC = new C(); }
+  if (AC && AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(freq, t0, dur, type = 'sine', vol = .16) {
+  const c = ac(); if (!c) return;
+  const o = c.createOscillator(), g = c.createGain(), t = c.currentTime + t0;
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .012);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .05);
+}
+function whoosh() {
+  const c = ac(); if (!c) return;
+  const n = (c.sampleRate * .3) | 0, b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  const src = c.createBufferSource(); src.buffer = b;
+  const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = .8;
+  f.frequency.setValueAtTime(800, c.currentTime);
+  f.frequency.exponentialRampToValueAtTime(2600, c.currentTime + .26);
+  const g = c.createGain(); g.gain.value = .22;
+  src.connect(f); f.connect(g); g.connect(c.destination); src.start();
+}
+function play(name) {
+  if (!sfxOn.v) return;
+  try {
+    if (name === 'page') whoosh();
+    else if (name === 'pop') { tone(620, 0, .1, 'triangle'); tone(930, .07, .12, 'triangle'); }
+    else if (name === 'ding') { tone(880, 0, .3, 'sine'); tone(1318, .13, .45, 'sine', .12); }
+    else if (name === 'tada') { [523, 659, 784, 1046].forEach((f, i) => tone(f, i * .1, .35, 'triangle', .15)); tone(1568, .42, .6, 'sine', .1); }
+    else if (name === 'click') tone(440, 0, .06, 'square', .07);
+  } catch {}
+}
+
+const view = $('#pageView');
+function firstOf(ch) { return PAGES.findIndex(p => p.ch === ch); }
+function showPage(i, dir = 1) {
+  pi = Math.max(0, Math.min(PAGES.length - 1, i));
+  const p = PAGES[pi];
+  view.innerHTML = `<div class="${dir >= 0 ? 'pageIn-r' : 'pageIn-l'}"}">${p.html}</div>`;
+  play(p.sound || 'page');
+  $('#pageLabel').textContent = `Hal ${pi + 1} / ${PAGES.length}`;
+  $('#chapLabel').textContent = p.ch ? `BAB ${p.ch} · ${p.name}` : 'Sampul';
+  $('#readBar').style.width = ((pi + 1) / PAGES.length * 100).toFixed(1) + '%';
+  $('#btnPrev').disabled = $('#btnPrev2').disabled = pi === 0;
+  const last = pi === PAGES.length - 1;
+  $('#btnNext').disabled = $('#btnNext2').disabled = last;
+  $('#btnNext2').innerHTML = last ? '🎉 Tamat' : 'Selanjutnya ▶';
+  $$('#dotRail .dot').forEach((d, k) => {
+    d.classList.toggle('on', k === pi); d.classList.toggle('done', k < pi);
+    d.setAttribute('aria-current', k === pi ? 'page' : 'false');
+  });
+  $$('#chapJump .chapBtn').forEach(b => b.classList.toggle('on', +b.dataset.ch === p.ch));
+  $$('[data-note]', view).forEach(b => b.addEventListener('click', () => openNote(+b.dataset.note)));
+  $$('[data-go]', view).forEach(b => b.addEventListener('click', () => showPage(+b.dataset.go, 1)));
+  $$('[data-restart]', view).forEach(b => b.addEventListener('click', () => showPage(0, -1)));
+  $$('[data-go-exp]', view).forEach(b => b.addEventListener('click', () => {
+    play('click'); $('#explorer').scrollIntoView({ behavior: 'smooth' });
+  }));
+}
+const next = () => showPage(pi + 1, 1);
+const prev = () => showPage(pi - 1, -1);
+$('#btnNext').addEventListener('click', next);
+$('#btnNext2').addEventListener('click', () => pi === PAGES.length - 1 ? play('tada') : next());
+$('#btnPrev').addEventListener('click', prev);
+$('#btnPrev2').addEventListener('click', prev);
+$('#btnRestart').addEventListener('click', () => showPage(0, -1));
+
+$('#chapJump').innerHTML = [{ ch: 0, t: '📕 Sampul' }, { ch: 1, t: 'BAB 1' }, { ch: 2, t: 'BAB 2' }, { ch: 3, t: 'BAB 3' }, { ch: 4, t: 'BAB 4' }]
+  .map(o => `<button class="chapBtn" data-ch="${o.ch}">${o.t}</button>`).join('');
+$$('#chapJump .chapBtn').forEach(b => b.addEventListener('click', () => { play('click'); showPage(firstOf(+b.dataset.ch), +b.dataset.ch > PAGES[pi].ch ? 1 : -1); }));
+$('#dotRail').innerHTML = PAGES.map((p, i) =>
+  `<button class="dot" data-i="${i}" title="Hal ${i + 1} · ${p.ch ? 'BAB ' + p.ch : 'Sampul'}: ${p.name}" aria-label="Ke halaman ${i + 1}"></button>`).join('');
+$$('#dotRail .dot').forEach(d => d.addEventListener('click', () => { play('click'); showPage(+d.dataset.i, +d.dataset.i > pi ? 1 : -1); }));
+
+$('#tgSfx').addEventListener('click', e => {
+  sfxOn.v = !sfxOn.v;
+  e.currentTarget.textContent = sfxOn.v ? '🔊 Sound FX: ON' : '🔇 Sound FX: OFF';
+  e.currentTarget.setAttribute('aria-pressed', String(sfxOn.v));
+  if (sfxOn.v) play('pop');
+});
+$('#tgFx').addEventListener('click', e => {
+  fxOn.v = !fxOn.v;
+  document.body.classList.toggle('no-fx', !fxOn.v);
+  e.currentTarget.textContent = fxOn.v ? '✨ Efek Komik: ON' : '✨ Efek Komik: OFF';
+  e.currentTarget.setAttribute('aria-pressed', String(fxOn.v));
+  play('click');
+});
+$('#btnFull').addEventListener('click', () => {
+  play('click');
+  try {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  } catch {}
+});
+
+document.addEventListener('keydown', e => {
+  if (!$('#noteModal').classList.contains('hidden')) { if (e.key === 'Escape') closeNote(); return; }
+  const t = e.target.tagName;
+  if (t === 'INPUT' || t === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft') prev();
+});
+let tx = null, ty = null;
+view.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+view.addEventListener('touchend', e => {
+  if (tx === null) return;
+  const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4) { play('click'); dx < 0 ? next() : prev(); }
+  tx = ty = null;
+}, { passive: true });
+
+function openNote(ch) {
+  const n = NOTES[ch]; if (!n) return;
+  play('ding');
+  $('#noteTitle').textContent = n.title;
+  $('#noteBody').innerHTML = n.html;
+  $('#noteAv').innerHTML = charRian('confident', .3);
+  const m = $('#noteModal');
+  m.classList.remove('hidden'); m.classList.add('flex');
+  $('#noteClose').focus();
+}
+function closeNote() {
+  const m = $('#noteModal');
+  m.classList.add('hidden'); m.classList.remove('flex');
+  play('click');
+}
+$('#noteClose').addEventListener('click', closeNote);
+$('#noteOk').addEventListener('click', closeNote);
+$('#noteModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeNote(); });
+
+const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+$$('.flip').forEach(card => {
+  const toggle = () => {
+    const pinned = !card.dataset.pinned;
+    card.dataset.pinned = pinned ? '1' : '';
+    card.classList.toggle('flipped', pinned);
+    play('pop');
+  };
+  card.addEventListener('click', toggle);
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  if (finePointer) {
+    card.addEventListener('mouseenter', () => { if (!card.dataset.pinned) card.classList.add('flipped'); });
+    card.addEventListener('mouseleave', () => { if (!card.dataset.pinned) card.classList.remove('flipped'); });
+  }
+});
+
+/* ---------- init ---------- */
+$('#heroRian').innerHTML = charRian('excited', .2);
+$('#heroAris').innerHTML = charAris('amazed', .7);
+$('#rianArt').innerHTML = charRian('happy', .4);
+$('#arisArt').innerHTML = charAris('calm', .9);
+const MOODS = {
+  rian: [['happy', 'Senang'], ['think', 'Berpikir'], ['amazed', 'Takjub'], ['excited', 'Bersemangat']],
+  aris: [['calm', 'Hangat'], ['think', 'Berpikir'], ['amazed', 'Takjub'], ['excited', 'Gembira']]
+};
+$('#rianMoods').innerHTML = MOODS.rian.map(([m, l], i) =>
+  `<div class="w-14 text-center"><div class="overflow-hidden rounded-xl border-2 border-ink bg-white">${charRian(m, i * .5)}</div><div class="mt-0.5 text-[.58rem] font-extrabold uppercase text-wood-500">${l}</div></div>`).join('');
+$('#arisMoods').innerHTML = MOODS.aris.map(([m, l], i) =>
+  `<div class="w-14 text-center"><div class="overflow-hidden rounded-xl border-2 border-ink bg-white">${charAris(m, i * .5)}</div><div class="mt-0.5 text-[.58rem] font-extrabold uppercase text-wood-500">${l}</div></div>`).join('');
+renderExp();
+showPage(0, 1);
+document.documentElement.classList.remove('tw-loading');
+
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a49e9c350c9bff78',t:'MTc5MTg5NzI5Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
